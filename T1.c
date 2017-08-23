@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <unistd.h>
+#include <signal.h>
 FILE *fptr;
+int finalizar = 0;
 
 struct Process
 {
@@ -29,7 +31,7 @@ struct Queue
 	struct Process *ultimoProceso;
 };
 
-void agregarProceso(struct Queue *lista){
+void AgregarProceso(struct Queue *lista){
 	struct Process *nuevoProceso = (struct Process *)malloc(sizeof(struct Process));
 	nuevoProceso -> sgte = NULL;
 
@@ -49,7 +51,7 @@ void agregarProceso(struct Queue *lista){
 
 }
 
-void eliminarProceso(struct Queue *lista, int PID) {
+void EliminarProceso(struct Queue *lista, int PID) {
 
 	struct Process *i = lista -> primerProceso;
 
@@ -84,7 +86,7 @@ void eliminarProceso(struct Queue *lista, int PID) {
 
 }
 
-void imprimirQueue(struct Queue *lista){
+void ImprimirQueue(struct Queue *lista){
 	struct Process *i = lista -> primerProceso;
 
 	if(lista -> primerProceso == NULL) {
@@ -109,9 +111,91 @@ void imprimirQueue(struct Queue *lista){
 	printf("\n****************************************\n");
 }
 
+int Length(struct Process *lista){
+  struct Process *i = lista;
+  int lenght = 0;
 
-int main(int argc, char const *argv[])
+  while (i != NULL)
+  {
+    ++lenght;
+    i = i -> sgte;
+  }
+
+  return lenght;
+}
+
+int EmpezarProceso(struct Queue *lista, int clock)
 {
+    
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    while(i != NULL && id == -1){
+        if (i -> start == clock)
+        {
+            id = i -> PID;
+        }
+        i = i -> sgte;
+    }
+    return id;
+}
+
+int SacarPrimero(struct Queue *lista)
+{
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    if (i != NULL && id == -1)
+    {
+        id = i -> PID;
+    }
+    return id;
+    return 0;
+}
+
+int Priority(struct Queue *lista)
+{
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    int prio = -1;
+
+    while(i != NULL && id == -1){
+        if (i -> priority > prio){
+            id = i -> PID;
+            prio = i -> priority;
+        }
+        i = i -> sgte;
+    }
+    return id;
+}
+
+int Roundrobin(struct Queue *lista, int quantum){
+
+    return 0;
+}
+
+int RevisarWaiting(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    ///estoy probando esto 
+    while(i != NULL && id == -1){
+        int a = 0;
+        int lista = i -> tiempos;
+        i = i -> sgte;
+    }
+    return id;
+
+}
+
+void handler(){
+    finalizar = 1;
+}
+
+void termiante(){
+
+    ///ya veremos//
+}
+int main(int argc, char *argv[])
+{
+    signal(SIGINT, handler);
 	struct Queue *Running = (struct Queue *)malloc(sizeof(struct Queue));
 	struct Queue *Waiting = (struct Queue *)malloc(sizeof(struct Queue)); 
 	struct Queue *Ready = (struct Queue *)malloc(sizeof(struct Queue)); 
@@ -127,12 +211,49 @@ int main(int argc, char const *argv[])
 
 	int PID = 0;
 
-	agregarProceso(Idle); // Primer Proceso
+	AgregarProceso(Idle); // Primer Proceso
 	Idle -> ultimoProceso -> PID = PID;
 	PID++;
 	
 	// Inicio Carga de Procesos
-	char filename[20] = "text.txt";
+    char filename[20];
+    char scheduler[20];
+    int quantum;
+    if (argc == 1)
+    {
+        printf("2 - 3 parametros requeridos, 0 recividos \n");
+        exit(0);
+    }
+    else if (argc == 2)
+    {
+        printf("2 - 3 parametros requeridos, 1 recividos \n");
+        exit(0);
+    }
+    else if (argc == 3)
+    {
+        strcpy(scheduler, argv[1]);
+        strcpy(filename, argv[2]);
+        if (strcmp(filename, "roundrobin") == 0)
+        {
+            quantum = 3;
+        }
+    }
+    else if (argc == 4)
+    {
+        strcpy(scheduler, argv[1]);
+        strcpy(filename, argv[2]);
+        quantum = argv[3] - "0";
+        if (strcmp(filename, "roundrobin") != 0)
+        {
+            printf("un quantum solo es recivido en caso de un scheduler roundrobin \n");
+            exit(0);
+        }
+    }
+    else
+    {
+        printf("%i parametros entregados, 2 - 3 requeridos\n", argc);
+        exit(0);
+    }
 	char ch;
 	int i;
 	int j = 0;
@@ -209,7 +330,7 @@ int main(int argc, char const *argv[])
     		j++;
 
     		if (ch == '\n'){
-	    		agregarProceso(Idle); // Agrega Nuevo Proceso a Idle
+	    		AgregarProceso(Idle); // Agrega Nuevo Proceso a Idle
 	    		Idle -> ultimoProceso -> PID = PID;
 	    		PID++;
 	    		j = 0;
@@ -230,14 +351,45 @@ int main(int argc, char const *argv[])
     }
     fclose(fptr);
     // Fin Carga de Procesos
+ 
+    int clock = 0;
+    while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
+        ///////////// en caso de que apretern crt C///////////////
+        if (finalizar == 1){
+            termiante();
+        }
+        ///////////////////////////////////
+        int proceso_a_iniciar = EmpezarProceso(Idle, clock);
+
+        if (proceso_a_iniciar != -1)
+        {   
+            printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
+            //CambiarProcesoLista(Idle, Ready, proceso_a_iniciar);
+            EliminarProceso(Idle,proceso_a_iniciar);
+        }
+
+        int sacar_de_waiting = -1;
+        if (strcmp(scheduler, "fcfs") == 0){
+            //revisar cola waiting 
+            sacar_de_waiting = RevisarWaiting(Waiting);
+
+
+            if (Running -> primerProceso == NULL){
+                int proceso_a_cpu = SacarPrimero(Ready);
+                if (proceso_a_cpu != -1)
+                {   
+                    termiante();
+                    //cambiar proceso
+                }
+            }
+            else{
+                termiante();
+            }
+    
+        } 
 
 
 
-    imprimirQueue(Idle);
-
-    eliminarProceso(Idle,0);
-
-    imprimirQueue(Idle);
 
 
 
@@ -253,7 +405,54 @@ int main(int argc, char const *argv[])
 
 
 
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        else if (strcmp(scheduler, "priority") == 0){
+            int proceso_a_cpu = Priority(Ready);
+            if (proceso_a_cpu != -1)
+            {
+                printf("dsa\n");
+            }
+        }
+        else if (strcmp(scheduler, "roundrobin" ) == 0){
+            int proceso_a_cpu = SacarPrimero(Ready);
+            if (proceso_a_cpu != -1)
+            {
+                printf("dsa\n");
+            }
+        }
+
+
+        ++clock;
+    }
+
+    ImprimirQueue(Idle);
+
+    EliminarProceso(Idle,0);
+
+    ImprimirQueue(Idle);
+
 	return 0;
 }
-
