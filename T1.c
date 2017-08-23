@@ -27,11 +27,12 @@ struct Process
 
 struct Queue
 {
+    char nombre[8];
 	struct Process *primerProceso;
 	struct Process *ultimoProceso;
 };
 
-void AgregarProceso(struct Queue *lista){
+void agregarProceso(struct Queue *lista){
 	struct Process *nuevoProceso = (struct Process *)malloc(sizeof(struct Process));
 	nuevoProceso -> sgte = NULL;
 
@@ -51,7 +52,43 @@ void AgregarProceso(struct Queue *lista){
 
 }
 
-void EliminarProceso(struct Queue *lista, int PID) {
+void agregarProceso2(struct Process *procesoOriginal, struct Queue *lista){
+    struct Process *nuevoProceso = (struct Process *)malloc(sizeof(struct Process));
+
+    nuevoProceso -> PID = procesoOriginal -> PID;
+    nuevoProceso -> priority = procesoOriginal -> priority;
+    strcpy(nuevoProceso -> nombre, procesoOriginal -> nombre);
+    strcpy(nuevoProceso -> state, procesoOriginal -> state);
+    nuevoProceso -> start = procesoOriginal -> start;
+    nuevoProceso -> N = procesoOriginal -> N;
+    nuevoProceso -> tiempos = procesoOriginal -> tiempos;
+    nuevoProceso -> pasos_cpu = procesoOriginal -> pasos_cpu;
+    nuevoProceso -> veces_bloqueo = procesoOriginal -> veces_bloqueo;
+    nuevoProceso -> turnaround = procesoOriginal -> turnaround;
+    nuevoProceso -> response = procesoOriginal -> response;
+    nuevoProceso -> waiting = procesoOriginal -> waiting;   
+
+    nuevoProceso -> sgte = NULL;
+
+    if (lista -> primerProceso == NULL) {
+
+        lista -> primerProceso = nuevoProceso;
+        lista -> ultimoProceso = nuevoProceso;
+
+    } else {
+
+        lista -> ultimoProceso -> sgte = nuevoProceso;
+        lista -> ultimoProceso = nuevoProceso;
+
+    }
+
+    lista -> ultimoProceso -> sgte = NULL;
+
+    printf("\n-> Se ha agregado %i a la lista %s\n", nuevoProceso -> PID, lista -> nombre);
+
+}
+
+void eliminarProceso(struct Queue *lista, int PID) {
 
 	struct Process *i = lista -> primerProceso;
 
@@ -78,7 +115,7 @@ void EliminarProceso(struct Queue *lista, int PID) {
 
 		i = i -> sgte;
 		if (aux != NULL){
-			printf("\n-> Se ha eliminado: %i\n", aux -> PID);
+			printf("\n-> Se ha eliminado %i de la lista %s\n", aux -> PID, lista -> nombre);
 			free(aux);
 		}
 		
@@ -86,13 +123,28 @@ void EliminarProceso(struct Queue *lista, int PID) {
 
 }
 
-void ImprimirQueue(struct Queue *lista){
+void cambiarProceso(int PID, struct Queue *lista1, struct Queue *lista2){
+    struct Process *i = lista1 -> primerProceso;
+
+    while(i != NULL) {
+
+        if (i -> PID == PID) {
+            agregarProceso2(i, lista2);
+            eliminarProceso(lista1, PID);
+            return;
+        }
+        i = i -> sgte;
+    }
+
+}
+
+void imprimirQueue(struct Queue *lista){
 	struct Process *i = lista -> primerProceso;
 
 	if(lista -> primerProceso == NULL) {
 		printf("No Hay Procesos\n");
 	}
-	printf("\nImprimiendo Procesos:");
+	printf("\nImprimiendo Procesos de %s:", lista -> nombre);
 	printf("\n****************************************\n\n");
 	while(i != NULL) {
 		printf("PID: %i", i -> PID);
@@ -111,7 +163,7 @@ void ImprimirQueue(struct Queue *lista){
 	printf("\n****************************************\n");
 }
 
-int Length(struct Process *lista){
+int length(struct Process *lista){
   struct Process *i = lista;
   int lenght = 0;
 
@@ -124,7 +176,7 @@ int Length(struct Process *lista){
   return lenght;
 }
 
-int EmpezarProceso(struct Queue *lista, int clock)
+int empezarProceso(struct Queue *lista, int clock)
 {
     
     struct Process *i = lista -> primerProceso;
@@ -139,7 +191,7 @@ int EmpezarProceso(struct Queue *lista, int clock)
     return id;
 }
 
-int SacarPrimero(struct Queue *lista)
+int sacarPrimero(struct Queue *lista)
 {
     struct Process *i = lista -> primerProceso;
     int id = -1;
@@ -151,7 +203,7 @@ int SacarPrimero(struct Queue *lista)
     return 0;
 }
 
-int Priority(struct Queue *lista)
+int priority(struct Queue *lista)
 {
     struct Process *i = lista -> primerProceso;
     int id = -1;
@@ -167,12 +219,12 @@ int Priority(struct Queue *lista)
     return id;
 }
 
-int Roundrobin(struct Queue *lista, int quantum){
+int roundrobin(struct Queue *lista, int quantum){
 
     return 0;
 }
 
-int RevisarWaiting(struct Queue *lista){
+int revisarWaiting(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
     ///estoy probando esto 
@@ -192,6 +244,7 @@ void handler(){
 void termiante(){
 
     ///ya veremos//
+    exit(0);
 }
 int main(int argc, char *argv[])
 {
@@ -199,7 +252,11 @@ int main(int argc, char *argv[])
 	struct Queue *Running = (struct Queue *)malloc(sizeof(struct Queue));
 	struct Queue *Waiting = (struct Queue *)malloc(sizeof(struct Queue)); 
 	struct Queue *Ready = (struct Queue *)malloc(sizeof(struct Queue)); 
-	struct Queue *Idle = (struct Queue *)malloc(sizeof(struct Queue)); 
+	struct Queue *Idle = (struct Queue *)malloc(sizeof(struct Queue));
+    strcpy(Running -> nombre, "Running"); 
+    strcpy(Waiting -> nombre, "Waiting"); 
+    strcpy(Ready -> nombre, "Ready"); 
+    strcpy(Idle -> nombre, "Idle"); 
 	Running -> primerProceso = NULL;
 	Waiting -> primerProceso = NULL;
 	Ready -> primerProceso = NULL;
@@ -211,7 +268,7 @@ int main(int argc, char *argv[])
 
 	int PID = 0;
 
-	AgregarProceso(Idle); // Primer Proceso
+	agregarProceso(Idle); // Primer Proceso
 	Idle -> ultimoProceso -> PID = PID;
 	PID++;
 	
@@ -330,7 +387,7 @@ int main(int argc, char *argv[])
     		j++;
 
     		if (ch == '\n'){
-	    		AgregarProceso(Idle); // Agrega Nuevo Proceso a Idle
+	    		agregarProceso(Idle); // Agrega Nuevo Proceso a Idle
 	    		Idle -> ultimoProceso -> PID = PID;
 	    		PID++;
 	    		j = 0;
@@ -343,10 +400,6 @@ int main(int argc, char *argv[])
     		int t = atoi(aux);
     		p_tiempos[k] = t;
     	}
-
-    	
-
-    	
         ch = fgetc(fptr);
     }
     fclose(fptr);
@@ -359,23 +412,23 @@ int main(int argc, char *argv[])
             termiante();
         }
         ///////////////////////////////////
-        int proceso_a_iniciar = EmpezarProceso(Idle, clock);
+        int proceso_a_iniciar = empezarProceso(Idle, clock);
 
         if (proceso_a_iniciar != -1)
         {   
             printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
             //CambiarProcesoLista(Idle, Ready, proceso_a_iniciar);
-            EliminarProceso(Idle,proceso_a_iniciar);
+            eliminarProceso(Idle,proceso_a_iniciar);
         }
 
         int sacar_de_waiting = -1;
         if (strcmp(scheduler, "fcfs") == 0){
             //revisar cola waiting 
-            sacar_de_waiting = RevisarWaiting(Waiting);
+            sacar_de_waiting = revisarWaiting(Waiting);
 
 
             if (Running -> primerProceso == NULL){
-                int proceso_a_cpu = SacarPrimero(Ready);
+                int proceso_a_cpu = sacarPrimero(Ready);
                 if (proceso_a_cpu != -1)
                 {   
                     termiante();
@@ -430,14 +483,14 @@ int main(int argc, char *argv[])
 
 
         else if (strcmp(scheduler, "priority") == 0){
-            int proceso_a_cpu = Priority(Ready);
+            int proceso_a_cpu = priority(Ready);
             if (proceso_a_cpu != -1)
             {
                 printf("dsa\n");
             }
         }
         else if (strcmp(scheduler, "roundrobin" ) == 0){
-            int proceso_a_cpu = SacarPrimero(Ready);
+            int proceso_a_cpu = sacarPrimero(Ready);
             if (proceso_a_cpu != -1)
             {
                 printf("dsa\n");
@@ -447,12 +500,6 @@ int main(int argc, char *argv[])
 
         ++clock;
     }
-
-    ImprimirQueue(Idle);
-
-    EliminarProceso(Idle,0);
-
-    ImprimirQueue(Idle);
 
 	return 0;
 }
