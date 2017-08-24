@@ -6,3 +6,6 @@
 ## hacer el priority (corto)
 ## hacer el round robin (largo)
 ## 
+
+Assumptions:
+El archivo de los procesos no termina en "\n"

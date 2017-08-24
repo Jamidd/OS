@@ -157,7 +157,7 @@ void imprimirQueue(struct Queue *lista){
 	    int N = i -> N;
 	    for (int k = 0; k < N*2-1; ++k)
 	    {
-	    	printf("\nTiempo[%i]:%i", k+1, p_tiempos[k]);
+	    	printf("\nTiempo[%i]:%i", k, p_tiempos[k]);
 	    }
 		i = i -> sgte;
 		printf("\n--------------------------\n");
@@ -592,12 +592,7 @@ int main(int argc, char *argv[])
     }
     fclose(fptr);
     setearIndicadores(Idle);
-    // esto no funca en mac
-    int a = length(Idle);
-    //printf("%i\n", a);
-    eliminarProceso(Idle, a-1);
-    //imprimirQueue(Idle);
-    //sleep(5);
+    
     // Fin Carga de Procesos
 
     int clock = 0;
