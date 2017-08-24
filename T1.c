@@ -608,12 +608,12 @@ int main(int argc, char *argv[])
         }
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
+        printf("clock%i\n", clock);
         if (proceso_a_iniciar != -1)
         {   
             printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
             cambiarProceso(proceso_a_iniciar, Idle, Ready);
         }
-        printf("clock%i\n", clock);
         int sacar_de_waiting = -1;
         int sacar_de_ready = -1;
         int sacar_de_running = -1;
