@@ -227,14 +227,41 @@ int roundrobin(struct Queue *lista, int quantum){
 int revisarWaiting(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
-    ///estoy probando esto 
     while(i != NULL && id == -1){
-        int a = 0;
-        int lista = i -> tiempos;
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_cpu;
+        if (p_tiempos[2*pasos - 1] == 0){
+            id = i -> PID;
+            return id;
+        }
         i = i -> sgte;
     }
     return id;
+}
 
+int revisarRunning(struct Queue *lista){
+    struct Process *i = lista ->primerProceso;
+    int id = -1;
+    int *p_tiempos = i -> tiempos;
+    int pasos = i -> pasos_cpu;
+    if (i != NULL && id == -1){
+        id = i -> PID;
+    }
+    if (id != -1){
+        if (p_tiempos[2*pasos - 2] != 0){
+            return -1;
+        }
+    }
+    return id;
+}
+
+int revisarReady(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    if (i != NULL && id == -1){
+        id = i -> PID;
+    }
+    return id;
 }
 
 void handler(){
@@ -406,6 +433,7 @@ int main(int argc, char *argv[])
     // Fin Carga de Procesos
  
     int clock = 0;
+    int CPU_libre = 0; // 0 -> libre  1 -> ocupada
     while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
         ///////////// en caso de que apretern crt C///////////////
         if (finalizar == 1){
@@ -413,32 +441,36 @@ int main(int argc, char *argv[])
         }
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
-
         if (proceso_a_iniciar != -1)
         {   
             printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
-            //CambiarProcesoLista(Idle, Ready, proceso_a_iniciar);
-            eliminarProceso(Idle,proceso_a_iniciar);
+            cambiarProceso(proceso_a_iniciar, Idle, Ready);
         }
 
         int sacar_de_waiting = -1;
+        int sacar_de_ready = -1;
+        int sacar_de_running = -1;
         if (strcmp(scheduler, "fcfs") == 0){
-            //revisar cola waiting 
+            sacar_de_running = revisarRunning(Running); //el proceso de rrunning ya termino??
+            if (sacar_de_running != -1){ // el proceso sigue ocupando la cpu
+                cambiarProceso(sacar_de_running,Running,Waiting);
+                CPU_libre = 0;
+            }
+
+            SACOWAIT:
             sacar_de_waiting = revisarWaiting(Waiting);
+            if (sacar_de_waiting != -1){
+                cambiarProceso(sacar_de_waiting, Waiting, Ready);
+                goto SACOWAIT;
+            }
 
-
-            if (Running -> primerProceso == NULL){
-                int proceso_a_cpu = sacarPrimero(Ready);
-                if (proceso_a_cpu != -1)
-                {   
-                    termiante();
-                    //cambiar proceso
+            if(CPU_libre == 0){
+                sacar_de_ready = revisarReady(Ready);
+                if (sacar_de_ready != -1){
+                    cambiarProceso(sacar_de_ready,Ready,Running);
+                    Running -> primerProceso -> pasos_cpu ++;
                 }
             }
-            else{
-                termiante();
-            }
-    
         } 
 
 
@@ -497,6 +529,11 @@ int main(int argc, char *argv[])
             }
         }
 
+        FINAL:
+        agregarInfoRunning(Running);
+        agregarInfoReady(Ready);
+        agregarInfoWaiting(Waiting);
+        agregarInfoIdle(Idle);
 
         ++clock;
     }
