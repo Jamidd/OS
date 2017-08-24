@@ -31,7 +31,7 @@ struct Process
 
 struct Queue
 {
-    char nombre[8];
+    char nombre[9];
 	struct Process *primerProceso;
 	struct Process *ultimoProceso;
 };
@@ -469,10 +469,10 @@ int main(int argc, char *argv[])
 	struct Queue *Ready = (struct Queue *)malloc(sizeof(struct Queue)); 
 	struct Queue *Idle = (struct Queue *)malloc(sizeof(struct Queue));
     struct Queue *Finished = (struct Queue *)malloc(sizeof(struct Queue));
-    strcpy(Running -> nombre, "Running"); 
-    strcpy(Waiting -> nombre, "Waiting"); 
+    strcpy(Running -> nombre, "Running");
+    strcpy(Waiting -> nombre, "Waiting");
     strcpy(Ready -> nombre, "Ready"); 
-    strcpy(Idle -> nombre, "Idle"); 
+    strcpy(Idle -> nombre, "Idle");
     strcpy(Finished -> nombre, "Finished");
 	Running -> primerProceso = NULL;
 	Waiting -> primerProceso = NULL;
@@ -490,6 +490,7 @@ int main(int argc, char *argv[])
 	agregarProceso(Idle); // Primer Proceso
 	Idle -> ultimoProceso -> PID = PID;
 	PID++;
+
 	
 	// Inicio Carga de Procesos
     char filename[20];
@@ -498,6 +499,7 @@ int main(int argc, char *argv[])
     strcpy(filename, "text.txt");
     strcpy(scheduler, "roundrobin");
     quantum = 3.0;
+
     // if (argc == 1)
     // {
     //     printf("2 - 3 parametros requeridos, 0 recividos \n");
@@ -608,7 +610,7 @@ int main(int argc, char *argv[])
     fclose(fptr);
     setearIndicadores(Idle);
     imprimirQueue(Idle);
-    
+
     // Fin Carga de Procesos
 
     int clock = 74;
