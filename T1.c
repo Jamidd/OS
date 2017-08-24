@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <math.h>
 
 FILE *fptr;
 int finalizar = 0;
@@ -223,11 +224,6 @@ int priority(struct Queue *lista)
     return id;
 }
 
-int roundrobin(struct Queue *lista, int quantum){
-
-    return 0;
-}
-
 int revisarWaiting(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
@@ -269,25 +265,21 @@ int revisarReadyFCFS(struct Queue *lista){
 int revisarReadyPriority(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
-    int menorPriority = 65;
+    int mayorPriority = -1;
     while (i != NULL) {
-
-        if (i -> priority < menorPriority) {
-            menorPriority = i -> priority;
+        if (i -> priority > mayorPriority) {
+            mayorPriority = i -> priority;
         }
         i = i -> sgte; 
     }
 
     i = lista -> primerProceso;
-
     while (i != NULL) {
-
-        if (i -> priority == menorPriority) {
+        if (i -> priority == mayorPriority) {
             return i -> PID;
         }
-
+        i = i -> sgte;
     } 
-
     return id;
 }
 
@@ -360,6 +352,21 @@ void setearIndicadores(struct Queue *lista){
     }
 }
 
+void agregarQuantum(struct Queue *lista, int quantum){
+    struct Process *i = lista -> primerProceso;
+    while(i != NULL){
+        float p = i -> priority; // prioridad texto
+        float P = 0.0;
+        float q = quantum;
+        float Q = 0.0;
+
+        P = p*q + pow(-1, roundf(p/q))*p;
+        Q = floorf(p/64) + 1;
+        printf("el cuantum de %i es %f\n", i -> PID, Q);
+        i -> quantum = Q;
+        i = i -> sgte;
+    }
+}
 void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished){
     struct Process *i = Running -> primerProceso;
     struct Process *j = Ready -> primerProceso;
@@ -487,10 +494,10 @@ int main(int argc, char *argv[])
 	// Inicio Carga de Procesos
     char filename[20];
     char scheduler[20];
-    int quantum;
+    float quantum;
     strcpy(filename, "text.txt");
-    strcpy(scheduler, "priority");
-    quantum = 3;
+    strcpy(scheduler, "roundrobin");
+    quantum = 3.0;
     // if (argc == 1)
     // {
     //     printf("2 - 3 parametros requeridos, 0 recividos \n");
@@ -604,9 +611,10 @@ int main(int argc, char *argv[])
     
     // Fin Carga de Procesos
 
-    int clock = 0;
+    int clock = 74;
     int CPU_libre = 0; // 0 -> libre  1 -> ocupada
     //imprimirQueue(Idle);
+    agregarQuantum(Idle, quantum);
     while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
         ///////////// en caso de que apretern crt C///////////////
         if (finalizar == 1){
@@ -615,6 +623,7 @@ int main(int argc, char *argv[])
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
         printf("clock%i\n", clock);
+        sleep(2);
         if (proceso_a_iniciar != -1)
         {   
             printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
