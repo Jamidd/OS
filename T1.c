@@ -269,16 +269,25 @@ int revisarReadyFCFS(struct Queue *lista){
 int revisarReadyPriority(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
+    int menorPriority = 65;
     while (i != NULL) {
 
-
-
-
-
-
-
+        if (i -> priority < menorPriority) {
+            menorPriority = i -> priority;
+        }
         i = i -> sgte; 
     }
+
+    i = lista -> primerProceso;
+
+    while (i != NULL) {
+
+        if (i -> priority == menorPriority) {
+            return i -> PID;
+        }
+
+    } 
+
     return id;
 }
 
@@ -480,7 +489,7 @@ int main(int argc, char *argv[])
     char scheduler[20];
     int quantum;
     strcpy(filename, "text.txt");
-    strcpy(scheduler, "fcfs");
+    strcpy(scheduler, "priority");
     quantum = 3;
     // if (argc == 1)
     // {
@@ -654,10 +663,41 @@ int main(int argc, char *argv[])
         } 
         
         else if (strcmp(scheduler, "priority") == 0){
-            int proceso_a_cpu = priority(Ready);
-            if (proceso_a_cpu != -1)
-            {
-                printf("dsa\n");
+            if(CPU_libre == 1){
+                sacar_de_running = revisarRunning(Running); //el proceso de rrunning ya termino??
+            }
+            if (sacar_de_running != -1){ // el proceso sigue ocupando la cpu
+                int a = Running -> primerProceso -> N;
+                int b = Running -> primerProceso -> pasos_cpu;
+                if (a == b){
+                    cambiarProceso(sacar_de_running, Running, Finished);
+                    CPU_libre = 0;
+                }
+                else{
+                    Running -> primerProceso -> veces_bloqueo ++;
+                    cambiarProceso(sacar_de_running,Running,Waiting);
+                    printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                    CPU_libre = 0;
+                }
+            }
+
+            // posiblemnet hacer do while
+            SACOWAIT2:
+            sacar_de_waiting = revisarWaiting(Waiting);
+            if (sacar_de_waiting != -1){
+                cambiarProceso(sacar_de_waiting, Waiting, Ready);
+                printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                goto SACOWAIT2;
+            }
+
+            if(CPU_libre == 0){
+                sacar_de_ready = revisarReadyPriority(Ready);
+                if (sacar_de_ready != -1){
+                    cambiarProceso(sacar_de_ready,Ready,Running);
+                    printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    CPU_libre = 1;
+                    Running -> primerProceso -> pasos_cpu ++;
+                }
             }
         }
 
