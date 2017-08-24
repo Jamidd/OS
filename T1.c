@@ -429,7 +429,7 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 }
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, handler);
+    //signal(SIGINT, handler);
 	struct Queue *Running = (struct Queue *)malloc(sizeof(struct Queue));
 	struct Queue *Waiting = (struct Queue *)malloc(sizeof(struct Queue)); 
 	struct Queue *Ready = (struct Queue *)malloc(sizeof(struct Queue)); 
