@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+
 FILE *fptr;
 int finalizar = 0;
 
@@ -242,14 +243,12 @@ int revisarWaiting(struct Queue *lista){
 }
 
 int revisarRunning(struct Queue *lista){
-    struct Process *i = lista ->primerProceso;
+    struct Process *i = lista -> primerProceso;
     int id = -1;
     int *p_tiempos = i -> tiempos;
     int pasos = i -> pasos_cpu;
-    if (i != NULL && id == -1){
+    if (i != NULL){
         id = i -> PID;
-    }
-    if (id != -1){
         if (p_tiempos[2*pasos - 2] != 0){
             return -1;
         }
@@ -260,7 +259,7 @@ int revisarRunning(struct Queue *lista){
 int revisarReady(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
-    if (i != NULL && id == -1){
+    if (i != NULL){
         id = i -> PID;
     }
     return id;
@@ -334,7 +333,7 @@ void setearIndicadores(struct Queue *lista){
     }
 }
 
-void termiante(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished){
+void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished){
     struct Process *i = Running -> primerProceso;
     struct Process *j = Ready -> primerProceso;
     struct Process *k = Waiting -> primerProceso;
@@ -593,18 +592,21 @@ int main(int argc, char *argv[])
     }
     fclose(fptr);
     setearIndicadores(Idle);
+    // esto no funca en mac
     int a = length(Idle);
-    printf("%i\n", a);
+    //printf("%i\n", a);
     eliminarProceso(Idle, a-1);
+    //imprimirQueue(Idle);
+    //sleep(5);
     // Fin Carga de Procesos
 
-    int clock = 78;
+    int clock = 0;
     int CPU_libre = 0; // 0 -> libre  1 -> ocupada
     //imprimirQueue(Idle);
     while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
         ///////////// en caso de que apretern crt C///////////////
         if (finalizar == 1){
-            termiante(Running, Waiting, Ready, Idle, Finished);
+            terminate(Running, Waiting, Ready, Idle, Finished);
         }
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
@@ -635,6 +637,8 @@ int main(int argc, char *argv[])
                     CPU_libre = 0;
                 }
             }
+
+            // posiblemnet hacer do while
             SACOWAIT:
             sacar_de_waiting = revisarWaiting(Waiting);
             if (sacar_de_waiting != -1){
@@ -718,7 +722,7 @@ int main(int argc, char *argv[])
 
         ++clock;
     }
-    termiante(Running, Waiting, Ready, Idle, Finished);
+    terminate(Running, Waiting, Ready, Idle, Finished);
 
 	return 0;
 }
