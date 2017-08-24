@@ -11,12 +11,13 @@ int finalizar = 0;
 struct Process
 {
 	int PID;
-	int priority;
+	float priority;
 	char nombre[257];
 	char state[8];
 	int start;
 	int N;
 	int *tiempos;
+    int quantum;
 
 	int pasos_cpu; // cantidad de veces que entro a running
 	int veces_bloqueo; // cantidad de veces de running a waiting
@@ -151,7 +152,7 @@ void imprimirQueue(struct Queue *lista){
 	while(i != NULL) {
 		printf("PID: %i", i -> PID);
 	    printf("\nNOMBRE: %s", i -> nombre);
-	    printf("\npriority: %i", i -> priority);
+	    printf("\npriority: %.2f", i -> priority);
 	    printf("\nstart: %i", i -> start);
 	    int *p_tiempos = i -> tiempos;
 	    int N = i -> N;
@@ -256,11 +257,27 @@ int revisarRunning(struct Queue *lista){
     return id;
 }
 
-int revisarReady(struct Queue *lista){
+int revisarReadyFCFS(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
     int id = -1;
     if (i != NULL){
         id = i -> PID;
+    }
+    return id;
+}
+
+int revisarReadyPriority(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    while (i != NULL) {
+
+
+
+
+
+
+
+        i = i -> sgte; 
     }
     return id;
 }
@@ -329,6 +346,7 @@ void setearIndicadores(struct Queue *lista){
         i -> turnaround = 0; 
         i -> response = 0; 
         i -> waiting = 0; 
+        i -> quantum = 0; 
         i = i -> sgte;
     }
 }
@@ -521,26 +539,7 @@ int main(int argc, char *argv[])
 
     	if (ch != 32 && ch != '\n'){
 
-    		if (j == 0){
-	    		aux[i] = ch;
-	    	}
-
-	    	else if (j == 1){
-	    		aux[i] = ch;
-	    	}
-
-	    	else if (j == 2){
-	    		aux[i] = ch;
-	    	}
-
-	    	else if (j == 3){
-	    		aux[i] = ch;
-
-	    	} 
-
-	    	else {
-	    		aux[i] = ch;
-	    	}
+	    	aux[i] = ch;
 
     	}
 
@@ -550,7 +549,7 @@ int main(int argc, char *argv[])
     			strcpy(Idle -> ultimoProceso -> nombre, aux);
     		}
     		else if (j == 1) {
-    			int priority = atoi(aux);
+    			int priority = atof(aux);
     			Idle -> ultimoProceso -> priority = priority;
     		}
     		else if (j == 2) {
@@ -592,6 +591,7 @@ int main(int argc, char *argv[])
     }
     fclose(fptr);
     setearIndicadores(Idle);
+    imprimirQueue(Idle);
     
     // Fin Carga de Procesos
 
@@ -643,7 +643,7 @@ int main(int argc, char *argv[])
             }
 
             if(CPU_libre == 0){
-                sacar_de_ready = revisarReady(Ready);
+                sacar_de_ready = revisarReadyFCFS(Ready);
                 if (sacar_de_ready != -1){
                     cambiarProceso(sacar_de_ready,Ready,Running);
                     printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
@@ -701,6 +701,7 @@ int main(int argc, char *argv[])
 
 
 
+
         
         else if (strcmp(scheduler, "roundrobin" ) == 0){
             int proceso_a_cpu = sacarPrimero(Ready);
@@ -714,6 +715,7 @@ int main(int argc, char *argv[])
   //      agregarInfoReady(Ready);
         agregarInfoWaiting(Waiting);
       //  agregarInfoIdle(Idle);
+
 
         ++clock;
     }
