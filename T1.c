@@ -20,6 +20,7 @@ struct Process
 	int *tiempos;
     int quantum;
     int pasos_robin;
+    int t_ejecucion;
 
 	int pasos_cpu; // cantidad de veces que entro a running
 	int veces_bloqueo; // cantidad de veces de running a waiting
@@ -144,6 +145,7 @@ void cambiarProceso(int PID, struct Queue *lista1, struct Queue *lista2){
             }
             else if (strcmp(lista2 -> nombre, "Waiting") == 0) {
                 strcpy(i -> state, "WAITING");
+                i -> t_ejecucion = 0;
                 printf("El proceso %s ha pasado al estado WAITING\n", i -> nombre); 
             }
             else if (strcmp(lista2 -> nombre, "Finished") == 0) {
@@ -246,7 +248,7 @@ int revisarWaiting(struct Queue *lista){
     int id = -1;
     while(i != NULL && id == -1){
         int *p_tiempos = i -> tiempos;
-        int pasos = i -> pasos_cpu;
+        int pasos = i -> pasos_cpu;        
         if (p_tiempos[2*pasos - 1] == 0){
             id = i -> PID;
             return id;
@@ -341,8 +343,8 @@ void agregarInfoRunning(struct Queue *lista){
         i -> turnaround ++;
         int *p_tiempos = i -> tiempos;
         int pasos = i -> pasos_cpu;
-
         p_tiempos[2*pasos - 2] --;
+        i -> t_ejecucion ++;
         i = i -> sgte;
     }
     
@@ -379,6 +381,7 @@ void agregarInfoRunningRobin(struct Queue *lista){
 
     while (i != NULL){
         i -> turnaround ++;
+        i -> t_ejecucion ++;
         int *p_tiempos = i -> tiempos;
         int pasos = i -> pasos_robin;
         p_tiempos[2*pasos - 2] --;
@@ -655,6 +658,28 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
     exit(0);
 }
 
+void imprimirIntervalos(struct Queue *lista1, char scheduler[20]){
+    struct Process *i = lista1 -> primerProceso;
+
+    if (i != NULL) {
+
+        int tiempo_restante;
+
+        if (strcmp(scheduler, "roundrobin") == 0){
+            tiempo_restante = i -> tiempos[2*(i -> pasos_robin) - 2];
+        } else {
+            tiempo_restante = i -> tiempos[2*(i -> pasos_cpu) - 2];
+        }
+        
+
+        printf("El proceso %s se ha ejecutado %i intervalos de tiempo y le quedan %i para que termine\n", i -> nombre, i -> t_ejecucion, tiempo_restante);
+
+    }
+
+    
+
+}
+
 void liberarMemoria(struct Queue *lista) {
     struct Process *aux;
     while (lista -> primerProceso != NULL) {
@@ -833,6 +858,7 @@ int main(int argc, char *argv[])
         int proceso_a_iniciar = empezarProceso(Idle, clock);
         printf("\nclock: %i\n", clock);
         imprimir(Running, Waiting, Ready, Idle, Finished);
+        imprimirIntervalos(Running, scheduler);
         if (proceso_a_iniciar != -1)
         {   
             cambiarProceso(proceso_a_iniciar, Idle, Ready);
@@ -859,7 +885,6 @@ int main(int argc, char *argv[])
                 }
             }
 
-            // posiblemnet hacer do while
             SACOWAIT:
             sacar_de_waiting = revisarWaiting(Waiting);
             if (sacar_de_waiting != -1){
