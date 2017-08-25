@@ -19,6 +19,7 @@ struct Process
 	int N;
 	int *tiempos;
     int quantum;
+    int pasos_robin;
 
 	int pasos_cpu; // cantidad de veces que entro a running
 	int veces_bloqueo; // cantidad de veces de running a waiting
@@ -95,8 +96,8 @@ void agregarProceso2(struct Process *procesoOriginal, struct Queue *lista){
 void eliminarProceso(struct Queue *lista, int PID) {
 
 	struct Process *i = lista -> primerProceso;
-
 	while(i != NULL) {
+        //printf("%i vs %i\n", i -> PID, PID);
 		struct Process *aux = NULL;
 
 		if (i -> sgte != NULL && i -> sgte -> PID == PID) {
@@ -114,13 +115,15 @@ void eliminarProceso(struct Queue *lista, int PID) {
 		if (i -> PID == PID && i == lista -> primerProceso) {
 			aux = i;
 			lista -> primerProceso = i -> sgte;
-			
 		}
 
 		i = i -> sgte;
 		if (aux != NULL){
+            //el free me tira error
 			//printf("\n-> Se ha eliminado %i de la lista %s\n", aux -> PID, lista -> nombre);
-			free(aux);
+			//free(aux);
+            //printf("fdsfsdagaaaaaaaaaaaaa\n");
+
 		}
 		
 	}
@@ -134,7 +137,7 @@ void cambiarProceso(int PID, struct Queue *lista1, struct Queue *lista2){
 
         if (i -> PID == PID) {
             agregarProceso2(i, lista2);
-            eliminarProceso(lista1, PID);
+            eliminarProceso(lista1, PID);//////problemas con eliminar proceso
             return;
         }
         i = i -> sgte;
@@ -283,56 +286,115 @@ int revisarReadyPriority(struct Queue *lista){
     return id;
 }
 
+int revisarRunningRobin(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    int *p_tiempos = i -> tiempos;
+    int pasos = i -> pasos_robin;
+    if (i != NULL){
+        id = i -> PID;
+        if (p_tiempos[2*pasos - 2] == 0){
+            i -> pasos_robin ++;
+            i -> quantum = -1;
+            return id;
+        }
+        if (i -> quantum == 0){
+            return id;
+        }
+    }
+    return -1;
+}
+
 void agregarInfoRunning(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
 
-    if (i == NULL){
-        return;
+    while (i != NULL){
+        i -> turnaround ++;
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_cpu;
+        //if (i -> PID == 0){
+        //    printf("tiempo restante en la cpu %i\n", p_tiempos[2*pasos -2]);
+        //}
+        p_tiempos[2*pasos - 2] --;
+        i = i -> sgte;
     }
-    i -> turnaround ++;
-    int *p_tiempos = i -> tiempos;
-    int pasos = i -> pasos_cpu;
-    //if (i -> PID == 0){
-    //    printf("tiempo restante en la cpu %i\n", p_tiempos[2*pasos -2]);
-    //}
-    p_tiempos[2*pasos - 2] --;
+    
 }
 
 void agregarInfoReady(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
 
-    if (i == NULL){
-        return;
+    while (i != NULL){
+        
+        i -> turnaround ++;
+        i -> waiting ++;
+        i = i -> sgte;
     }
-    i -> turnaround ++;
-    i -> waiting ++;
 }
 
 void agregarInfoWaiting(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
 
-    if (i == NULL){
-        return;
+    while (i != NULL){
+        i -> turnaround ++;
+        i -> waiting ++;
+        i -> response ++;
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_cpu;
+        //if (i -> PID == 0){
+        //    printf("tiempo restante en la waiting%i\n", p_tiempos[2*pasos -1]);        
+        //}
+        p_tiempos[2*pasos - 1] --;
+        i = i -> sgte;
     }
-    i -> turnaround ++;
-    i -> waiting ++;
-    i -> response ++;
-    int *p_tiempos = i -> tiempos;
-    int pasos = i -> pasos_cpu;
-    //if (i -> PID == 0){
-    //    printf("tiempo restante en la waiting%i\n", p_tiempos[2*pasos -1]);        
-    //}
-    p_tiempos[2*pasos - 1] --;
+}
 
+void agregarInfoRunningRobin(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+
+    while (i != NULL){
+        i -> turnaround ++;
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_robin;
+        printf("pasos pasos %i\n", pasos);
+        printf("normal %i\n", p_tiempos[2*pasos - 2]);
+        p_tiempos[2*pasos - 2] --;
+        i -> quantum --;
+        i = i -> sgte;
+    }
+}
+
+void agregarInfoReadyRobin(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+
+    while (i != NULL){
+        i -> turnaround ++;
+        i -> waiting ++;
+        i = i -> sgte;
+    }
+}
+
+void agregarInfoWaitingRobin(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+
+    while (i != NULL){
+        i -> turnaround ++;
+        i -> waiting ++;
+        i -> response ++;
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_robin;
+        p_tiempos[2*pasos - 1] --;
+        i = i -> sgte;
+    }
 }
 
 void agregarInfoIdle(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
 
-    if (i == NULL){
-        return;
+    while (i != NULL){
+        i -> waiting ++;
+        i = i -> sgte;
     }
-    i -> waiting ++;
 }
 
 void handler(){
@@ -348,6 +410,7 @@ void setearIndicadores(struct Queue *lista){
         i -> response = 0; 
         i -> waiting = 0; 
         i -> quantum = 0; 
+        i -> pasos_robin = 1;
         i = i -> sgte;
     }
 }
@@ -362,7 +425,6 @@ void agregarQuantum(struct Queue *lista, int quantum){
 
         P = p*q + pow(-1, roundf(p/q))*p;
         Q = floorf(p/64) + 1;
-        printf("el cuantum de %i es %f\n", i -> PID, Q);
         i -> quantum = Q;
         i = i -> sgte;
     }
@@ -498,7 +560,7 @@ int main(int argc, char *argv[])
     float quantum;
     strcpy(filename, "text.txt");
     strcpy(scheduler, "roundrobin");
-    quantum = 3.0;
+    quantum = 7.0;
 
     // if (argc == 1)
     // {
@@ -609,14 +671,14 @@ int main(int argc, char *argv[])
     }
     fclose(fptr);
     setearIndicadores(Idle);
-    imprimirQueue(Idle);
-
     // Fin Carga de Procesos
 
     int clock = 74;
     int CPU_libre = 0; // 0 -> libre  1 -> ocupada
     //imprimirQueue(Idle);
-    agregarQuantum(Idle, quantum);
+    if (strcmp(scheduler, "roundrobin") == 0){
+        agregarQuantum(Idle, quantum);    
+    }
     while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
         ///////////// en caso de que apretern crt C///////////////
         if (finalizar == 1){
@@ -625,7 +687,6 @@ int main(int argc, char *argv[])
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
         printf("clock%i\n", clock);
-        sleep(2);
         if (proceso_a_iniciar != -1)
         {   
             printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
@@ -671,8 +732,12 @@ int main(int argc, char *argv[])
                     Running -> primerProceso -> pasos_cpu ++;
                 }
             }
+
+            agregarInfoRunning(Running);
+            agregarInfoReady(Ready);
+            agregarInfoWaiting(Waiting);
+            agregarInfoIdle(Idle);
         } 
-        
         else if (strcmp(scheduler, "priority") == 0){
             if(CPU_libre == 1){
                 sacar_de_running = revisarRunning(Running); //el proceso de rrunning ya termino??
@@ -710,63 +775,64 @@ int main(int argc, char *argv[])
                     Running -> primerProceso -> pasos_cpu ++;
                 }
             }
+            agregarInfoRunning(Running);
+            agregarInfoReady(Ready);
+            agregarInfoWaiting(Waiting);
+            agregarInfoIdle(Idle);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         else if (strcmp(scheduler, "roundrobin" ) == 0){
-            int proceso_a_cpu = sacarPrimero(Ready);
-            if (proceso_a_cpu != -1)
-            {
-                printf("dsa\n");
+            sleep(1);
+            if(CPU_libre == 1){
+                sacar_de_running = revisarRunningRobin(Running); //el proceso de rrunning ya termino??
             }
+            if (sacar_de_running != -1){ // el proceso sigue ocupando la cpu
+                Running -> primerProceso -> veces_bloqueo ++;
+                if (Running -> primerProceso -> quantum == 0){
+                    cambiarProceso(sacar_de_running, Running, Ready);
+                    printf("el proceso %i ha salido de Running y paso a Ready\n", sacar_de_running);
+                    CPU_libre = 0;
+                }
+                else{
+                    int a = Running -> primerProceso -> N;
+                    int b = Running -> primerProceso -> pasos_robin;
+                    printf("%i, %in", a, b);
+                    if (a == b){
+                        cambiarProceso(sacar_de_running, Running, Finished);
+                        CPU_libre = 0;
+                    }
+                    else{
+                        cambiarProceso(sacar_de_running,Running,Waiting);
+                        printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                        CPU_libre = 0;
+                    }
+                }
+            }
+
+            // posiblemnet hacer do while
+            SACOWAIT3:
+            sacar_de_waiting = revisarWaiting(Waiting);
+            if (sacar_de_waiting != -1){
+                cambiarProceso(sacar_de_waiting, Waiting, Ready);
+                printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                goto SACOWAIT3;
+            }
+
+            if(CPU_libre == 0){
+                sacar_de_ready = revisarReadyFCFS(Ready);
+                if (sacar_de_ready != -1){
+                    cambiarProceso(sacar_de_ready,Ready,Running);
+                    printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    CPU_libre = 1;
+                    Running -> primerProceso -> pasos_cpu ++;
+                    agregarQuantum(Running, quantum);
+                }
+            }
+
+            agregarInfoRunningRobin(Running);
+            agregarInfoReadyRobin(Ready);
+            agregarInfoWaitingRobin(Waiting);
+            agregarInfoIdle(Idle);
         }
-
-        agregarInfoRunning(Running);
-  //      agregarInfoReady(Ready);
-        agregarInfoWaiting(Waiting);
-      //  agregarInfoIdle(Idle);
-
 
         ++clock;
     }
