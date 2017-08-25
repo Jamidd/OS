@@ -1,10 +1,15 @@
 # Tarea 1 S.O
 
-## Por ahora lee 'text.txt'
+## Integrantes
 
-## ver que los indicadores estes indicando lo correcto Responce, Waitin, Turnarround
-## hacer el round robin (largo)
-** Se debe compilar "gcc -o t1 t1.c -lm"
+* Jaime Middleton
+* Fabio Traverso
 
-Assumptions:
-El archivo de los procesos no termina en "\n"
+## Compilar 
+```
+gcc -o t1 t1.c -lm
+```
+
+###Supuestos:
+· El archivo de los procesos contiene un proceso válido por línea, es decir, no contiene líneas vacías.
+· El response time muestra el total de tiempo en que el proceso se demora de pasar desde 'ready' a 'running'.
