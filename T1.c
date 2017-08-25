@@ -71,7 +71,9 @@ void agregarProceso2(struct Process *procesoOriginal, struct Queue *lista){
     nuevoProceso -> veces_bloqueo = procesoOriginal -> veces_bloqueo;
     nuevoProceso -> turnaround = procesoOriginal -> turnaround;
     nuevoProceso -> response = procesoOriginal -> response;
-    nuevoProceso -> waiting = procesoOriginal -> waiting;   
+    nuevoProceso -> waiting = procesoOriginal -> waiting;
+    nuevoProceso -> quantum = procesoOriginal -> quantum; 
+    nuevoProceso -> pasos_robin = procesoOriginal -> pasos_robin;  
 
     nuevoProceso -> sgte = NULL;
 
@@ -305,6 +307,21 @@ int revisarRunningRobin(struct Queue *lista){
     return -1;
 }
 
+int revisarWaitingRobin(struct Queue *lista){
+    struct Process *i = lista -> primerProceso;
+    int id = -1;
+    while(i != NULL && id == -1){
+        int *p_tiempos = i -> tiempos;
+        int pasos = i -> pasos_robin;
+        if (p_tiempos[2*pasos - 1] == 0){
+            id = i -> PID;
+            return id;
+        }
+        i = i -> sgte;
+    }
+    return id;
+}
+
 void agregarInfoRunning(struct Queue *lista){
     struct Process *i = lista -> primerProceso;
 
@@ -356,8 +373,6 @@ void agregarInfoRunningRobin(struct Queue *lista){
         i -> turnaround ++;
         int *p_tiempos = i -> tiempos;
         int pasos = i -> pasos_robin;
-        printf("pasos pasos %i\n", pasos);
-        printf("normal %i\n", p_tiempos[2*pasos - 2]);
         p_tiempos[2*pasos - 2] --;
         i -> quantum --;
         i = i -> sgte;
@@ -398,6 +413,7 @@ void agregarInfoIdle(struct Queue *lista){
 }
 
 void handler(){
+    printf("Simulacion cancelada por usuario\n");
     finalizar = 1;
 }
 
@@ -415,6 +431,60 @@ void setearIndicadores(struct Queue *lista){
     }
 }
 
+void imprimir(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished){
+    struct Process *i = Running -> primerProceso;
+    struct Process *j = Ready -> primerProceso;
+    struct Process *k = Waiting -> primerProceso;
+    struct Process *l = Idle -> primerProceso;
+    struct Process *m = Finished -> primerProceso;
+    char a[500] = "Running:  ";
+    char b[500] = "Ready:    ";
+    char c[500] = "Waiting:  ";
+    char d[500] = "Idle:     ";
+    char e[500] = "Finished: ";
+    while(i != NULL){
+        char buffer[5];
+        sprintf(buffer, "%d", i -> PID);
+        strcat(a, " -> ");
+        strcat(a, buffer);
+        i = i -> sgte;
+    }
+    while(j != NULL){
+        char buffer[5];
+        sprintf(buffer, "%d", j -> PID);
+        strcat(b, " -> ");
+        strcat(b, buffer);
+        j = j -> sgte;
+    }
+    while(k != NULL){
+        char buffer[5];
+        sprintf(buffer, "%d", k -> PID);
+        strcat(c, " -> ");
+        strcat(c, buffer);
+        k = k -> sgte;
+    }
+    while(l != NULL){
+        char buffer[5];
+        sprintf(buffer, "%d", l -> PID);
+        strcat(d, " -> ");
+        strcat(d, buffer);
+        l = l -> sgte;
+    }
+    while(m != NULL){
+        char buffer[5];
+        sprintf(buffer, "%d", m -> PID);
+        strcat(e, " -> ");
+        strcat(e, buffer);
+        m = m -> sgte;
+    }
+    //printf("\n\n\n\n");
+    printf("%s\n", a);
+    printf("%s\n", b);
+    printf("%s\n", c);
+    printf("%s\n", d);
+    printf("%s\n", e);
+}
+
 void agregarQuantum(struct Queue *lista, int quantum){
     struct Process *i = lista -> primerProceso;
     while(i != NULL){
@@ -429,7 +499,7 @@ void agregarQuantum(struct Queue *lista, int quantum){
         i = i -> sgte;
     }
 }
-void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished){
+void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready, struct Queue *Idle, struct Queue *Finished, int tipo){
     struct Process *i = Running -> primerProceso;
     struct Process *j = Ready -> primerProceso;
     struct Process *k = Waiting -> primerProceso;
@@ -438,11 +508,21 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
     printf("\n \nHa terminado la simulacion \n \n");
     while(i != NULL){
         printf("Proceso: %s\n", i -> nombre);
-        if (i -> N == i -> pasos_cpu){
-            printf("Estado: Finalizado\n");
+        if (tipo == 1){
+            if (i -> N == i -> pasos_robin){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         else{
-            printf("Estado: En ejecucion\n");
+            if (i -> N == i -> pasos_cpu){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         printf("Elegido para CPU: %i veces\n", i -> pasos_cpu);
         printf("Proceso bloqueado: %i veces\n", i -> veces_bloqueo);
@@ -455,11 +535,21 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 
     while(j != NULL){
         printf("Proceso: %s\n", j -> nombre);
-        if (j -> N == j -> pasos_cpu){
-            printf("Estado: Finalizado\n");
+        if (tipo == 1){
+            if (j -> N == j -> pasos_robin){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         else{
-            printf("Estado: En ejecucion\n");
+            if (j -> N == j -> pasos_cpu){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         printf("Elegido para CPU: %i veces\n", j -> pasos_cpu);
         printf("Proceso bloqueado: %i veces\n", j -> veces_bloqueo);
@@ -472,11 +562,21 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 
     while(k != NULL){
         printf("Proceso: %s\n", k -> nombre);
-        if (k -> N == k -> pasos_cpu){
-            printf("Estado: Finalizado\n");
+        if (tipo == 1){
+            if (k -> N == k -> pasos_robin){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         else{
-            printf("Estado: En ejecucion\n");
+            if (k -> N == k -> pasos_cpu){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         printf("Elegido para CPU: %i veces\n", k -> pasos_cpu);
         printf("Proceso bloqueado: %i veces\n", k -> veces_bloqueo);
@@ -489,11 +589,21 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 
     while(l != NULL){
         printf("Proceso: %s\n", l -> nombre);
-        if (l -> N == l -> pasos_cpu){
-            printf("Estado: Finalizado\n");
+        if (tipo == 1){
+            if (l -> N == l -> pasos_robin){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         else{
-            printf("Estado: En ejecucion\n");
+            if (l -> N == l -> pasos_cpu){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         printf("Elegido para CPU: %i veces\n", l -> pasos_cpu);
         printf("Proceso bloqueado: %i veces\n", l -> veces_bloqueo);
@@ -506,11 +616,21 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 
     while(m  != NULL){
         printf("Proceso: %s\n", m -> nombre);
-        if (m  -> N == m  -> pasos_cpu){
-            printf("Estado: Finalizado\n");
+        if (tipo == 1){
+            if (m -> N == m -> pasos_robin){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         else{
-            printf("Estado: En ejecucion\n");
+            if (m -> N == m -> pasos_cpu){
+                printf("Estado: Finalizado\n");
+            }
+            else{
+                printf("Estado: En ejecucion\n");
+            }
         }
         printf("Elegido para CPU: %i  veces\n", m  -> pasos_cpu);
         printf("Proceso bloqueado: %i  veces\n", m  -> veces_bloqueo);
@@ -525,7 +645,7 @@ void terminate(struct Queue *Running, struct Queue *Waiting, struct Queue *Ready
 }
 int main(int argc, char *argv[])
 {
-    //signal(SIGINT, handler);
+    signal(SIGINT, handler);
 	struct Queue *Running = (struct Queue *)malloc(sizeof(struct Queue));
 	struct Queue *Waiting = (struct Queue *)malloc(sizeof(struct Queue)); 
 	struct Queue *Ready = (struct Queue *)malloc(sizeof(struct Queue)); 
@@ -560,7 +680,7 @@ int main(int argc, char *argv[])
     float quantum;
     strcpy(filename, "text.txt");
     strcpy(scheduler, "roundrobin");
-    quantum = 7.0;
+    quantum = 15.0;
 
     // if (argc == 1)
     // {
@@ -672,24 +792,31 @@ int main(int argc, char *argv[])
     fclose(fptr);
     setearIndicadores(Idle);
     // Fin Carga de Procesos
-
-    int clock = 74;
+    int clock = 0;
     int CPU_libre = 0; // 0 -> libre  1 -> ocupada
     //imprimirQueue(Idle);
+
     if (strcmp(scheduler, "roundrobin") == 0){
         agregarQuantum(Idle, quantum);    
     }
     while(Running -> primerProceso != NULL || Ready -> primerProceso != NULL || Waiting -> primerProceso != NULL || Idle -> primerProceso != NULL){
         ///////////// en caso de que apretern crt C///////////////
         if (finalizar == 1){
-            terminate(Running, Waiting, Ready, Idle, Finished);
+            if (strcmp(scheduler, "roundrobin") == 0){
+                terminate(Running, Waiting, Ready, Idle, Finished, 1);
+            }
+            else{
+                terminate(Running, Waiting, Ready, Idle, Finished, 0);
+            }
         }
+        usleep(500000);
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
-        printf("clock%i\n", clock);
+        printf("\n\n\nclock: %i\n", clock);
+        imprimir(Running, Waiting, Ready, Idle, Finished);
         if (proceso_a_iniciar != -1)
         {   
-            printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
+            //printf("el proceso a iniciar es:%i\n", proceso_a_iniciar);
             cambiarProceso(proceso_a_iniciar, Idle, Ready);
         }
         int sacar_de_waiting = -1;
@@ -703,13 +830,15 @@ int main(int argc, char *argv[])
                 int a = Running -> primerProceso -> N;
                 int b = Running -> primerProceso -> pasos_cpu;
                 if (a == b){
+                    //printf("el proceso PID: %i, ha finalizado\n", sacar_de_running);
                     cambiarProceso(sacar_de_running, Running, Finished);
                     CPU_libre = 0;
                 }
                 else{
                     Running -> primerProceso -> veces_bloqueo ++;
                     cambiarProceso(sacar_de_running,Running,Waiting);
-                    printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                    //printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 0;
                 }
             }
@@ -719,7 +848,8 @@ int main(int argc, char *argv[])
             sacar_de_waiting = revisarWaiting(Waiting);
             if (sacar_de_waiting != -1){
                 cambiarProceso(sacar_de_waiting, Waiting, Ready);
-                printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //imprimir(Running, Waiting, Ready, Idle, Finished);
                 goto SACOWAIT;
             }
 
@@ -727,7 +857,8 @@ int main(int argc, char *argv[])
                 sacar_de_ready = revisarReadyFCFS(Ready);
                 if (sacar_de_ready != -1){
                     cambiarProceso(sacar_de_ready,Ready,Running);
-                    printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 1;
                     Running -> primerProceso -> pasos_cpu ++;
                 }
@@ -746,13 +877,15 @@ int main(int argc, char *argv[])
                 int a = Running -> primerProceso -> N;
                 int b = Running -> primerProceso -> pasos_cpu;
                 if (a == b){
+                    //printf("el proceso PID: %i, ha finalizado\n", sacar_de_running);
                     cambiarProceso(sacar_de_running, Running, Finished);
                     CPU_libre = 0;
                 }
                 else{
                     Running -> primerProceso -> veces_bloqueo ++;
                     cambiarProceso(sacar_de_running,Running,Waiting);
-                    printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                    //printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 0;
                 }
             }
@@ -762,7 +895,8 @@ int main(int argc, char *argv[])
             sacar_de_waiting = revisarWaiting(Waiting);
             if (sacar_de_waiting != -1){
                 cambiarProceso(sacar_de_waiting, Waiting, Ready);
-                printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //imprimir(Running, Waiting, Ready, Idle, Finished);
                 goto SACOWAIT2;
             }
 
@@ -770,7 +904,8 @@ int main(int argc, char *argv[])
                 sacar_de_ready = revisarReadyPriority(Ready);
                 if (sacar_de_ready != -1){
                     cambiarProceso(sacar_de_ready,Ready,Running);
-                    printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 1;
                     Running -> primerProceso -> pasos_cpu ++;
                 }
@@ -781,39 +916,41 @@ int main(int argc, char *argv[])
             agregarInfoIdle(Idle);
         }
         else if (strcmp(scheduler, "roundrobin" ) == 0){
-            sleep(1);
             if(CPU_libre == 1){
                 sacar_de_running = revisarRunningRobin(Running); //el proceso de rrunning ya termino??
             }
             if (sacar_de_running != -1){ // el proceso sigue ocupando la cpu
-                Running -> primerProceso -> veces_bloqueo ++;
                 if (Running -> primerProceso -> quantum == 0){
+                    Running -> primerProceso -> veces_bloqueo ++;
                     cambiarProceso(sacar_de_running, Running, Ready);
-                    printf("el proceso %i ha salido de Running y paso a Ready\n", sacar_de_running);
+                    //printf("el proceso %i ha salido de Running y paso a Ready\n", sacar_de_running);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 0;
                 }
                 else{
                     int a = Running -> primerProceso -> N;
                     int b = Running -> primerProceso -> pasos_robin;
-                    printf("%i, %in", a, b);
                     if (a == b){
+                        //printf("el proceso PID: %i, ha finalizado\n", sacar_de_running);
                         cambiarProceso(sacar_de_running, Running, Finished);
                         CPU_libre = 0;
                     }
                     else{
+                        Running -> primerProceso -> veces_bloqueo ++;
                         cambiarProceso(sacar_de_running,Running,Waiting);
-                        printf("el proceso %i ha salido de Running y paso a Waiting\n", sacar_de_running);
+                        //printf("el proceso %i ha salido de Running y paso a waiting\n", sacar_de_running);
+                        //imprimir(Running, Waiting, Ready, Idle, Finished);
                         CPU_libre = 0;
                     }
                 }
             }
-
             // posiblemnet hacer do while
             SACOWAIT3:
-            sacar_de_waiting = revisarWaiting(Waiting);
+            sacar_de_waiting = revisarWaitingRobin(Waiting);
             if (sacar_de_waiting != -1){
                 cambiarProceso(sacar_de_waiting, Waiting, Ready);
-                printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //printf("el proceso %i ha salido de Waiting y ha pasado a Ready\n", sacar_de_waiting);
+                //imprimir(Running, Waiting, Ready, Idle, Finished);
                 goto SACOWAIT3;
             }
 
@@ -821,7 +958,8 @@ int main(int argc, char *argv[])
                 sacar_de_ready = revisarReadyFCFS(Ready);
                 if (sacar_de_ready != -1){
                     cambiarProceso(sacar_de_ready,Ready,Running);
-                    printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //printf("el proceso %i ha salido de Ready y Paso a Running\n", sacar_de_ready);
+                    //imprimir(Running, Waiting, Ready, Idle, Finished);
                     CPU_libre = 1;
                     Running -> primerProceso -> pasos_cpu ++;
                     agregarQuantum(Running, quantum);
@@ -836,7 +974,12 @@ int main(int argc, char *argv[])
 
         ++clock;
     }
-    terminate(Running, Waiting, Ready, Idle, Finished);
-
+    if (strcmp(scheduler, "roundrobin") == 0){
+        terminate(Running, Waiting, Ready, Idle, Finished, 1);
+    }
+    else
+    {
+        terminate(Running, Waiting, Ready, Idle, Finished, 0);   
+    }
 	return 0;
 }
