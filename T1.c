@@ -664,15 +664,7 @@ void imprimirIntervalos(struct Queue *lista1, char scheduler[20]){
     struct Process *i = lista1 -> primerProceso;
 
     if (i != NULL) {
-        printf("%i\n", i -> t_total);
         int tiempo_restante = i -> t_total - i -> t_ejecucion;
-
-        //if (strcmp(scheduler, "roundrobin") == 0){
-        //    tiempo_restante = i -> tiempos[2*(i -> pasos_robin) - 2];
-        //} else {
-        //    tiempo_restante = i -> tiempos[2*(i -> pasos_cpu) - 2];
-        //}
-        
 
         printf("El proceso %s se ha ejecutado %i intervalos de tiempo y le quedan %i para que termine\n", i -> nombre, i -> t_ejecucion, tiempo_restante);
 
@@ -698,11 +690,7 @@ void setearTiempoTotal(struct Queue *lista) {
     
         }
 
-        printf("%s: %i\n", i -> nombre, tiempo_total);
-
         i -> t_total = tiempo_total;
-
-        printf("%s: %i\n", i -> nombre, i -> t_total);
 
         i = i -> sgte;
     }
