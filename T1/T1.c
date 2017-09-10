@@ -871,7 +871,7 @@ int main(int argc, char *argv[])
                 terminate(Running, Waiting, Ready, Idle, Finished, 0, clock);
             }
         }
-        //usleep(500000);
+        usleep(50000);
         ///////////////////////////////////
         int proceso_a_iniciar = empezarProceso(Idle, clock);
         printf("\nclock: %i\n", clock);
