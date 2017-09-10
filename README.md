@@ -5,9 +5,11 @@
 * Jaime Middleton
 * Fabio Traverso
 
-## Compilar 
+## USO
 ```
-gcc -o t1 t1.c -lm
+$ make
+$ ./simulator scheduler file quantum
+
 ```
 
 ## Supuestos:
