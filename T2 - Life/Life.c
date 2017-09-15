@@ -59,7 +59,7 @@ void liberarMemoriaLis(struct Lista *lista) {
     }
 }
 
-void agregarFila(struct Columna *col){
+void agregarFila(struct Columna *col){ //agrega una fila al struct columan (la matrix )
     struct Fila *nuevaFila = (struct Fila *)malloc(sizeof(struct Fila));
     nuevaFila -> sgteFila = NULL;
 
@@ -79,7 +79,7 @@ void agregarFila(struct Columna *col){
 
 }
 
-void agregarNodo(struct Fila *fil){
+void agregarNodo(struct Fila *fil){ //agrega un nodo al struct fila 
     struct Node *nuevoNodo = (struct Node *)malloc(sizeof(struct Node));
     nuevoNodo -> sgte = NULL;
 
@@ -99,7 +99,7 @@ void agregarNodo(struct Fila *fil){
 
 }
 
-void agregarFichaViva(struct Columna *col, int fila, int columna){
+void agregarFichaViva(struct Columna *col, int fila, int columna){ //agrega un 0 al la posicion que le idico en el tablero (matrix)
     //printf("%i\n", fila);
     //printf("%i\n", columna);
 
@@ -117,7 +117,7 @@ void agregarFichaViva(struct Columna *col, int fila, int columna){
     }
     x -> viva = 1;
 }
-void agregarFichaMuerta(struct Columna *col, int fila, int columna){
+void agregarFichaMuerta(struct Columna *col, int fila, int columna){ //agrega un 0 al la posicion que le idico en el tablero (matrix)
     //printf("%i\n", fila);
     //printf("%i\n", columna);
 
@@ -136,7 +136,7 @@ void agregarFichaMuerta(struct Columna *col, int fila, int columna){
     x -> viva = 0;
 }
 
-void imprimirMatrix(struct Columna *col){
+void imprimirMatrix(struct Columna *col){ //autoexplicativo
     struct Fila *i = col -> primeraFila;
     struct Node *x;
     while(i != NULL) {
@@ -150,14 +150,14 @@ void imprimirMatrix(struct Columna *col){
     }
 }
 
-void input(char *prompt, char *buffer, size_t length)
+void input(char *prompt, char *buffer, size_t length) //recive un imput de consola
 {
     printf("%s ", prompt);
     fflush(stdout);
     fgets(buffer, length, stdin);
 }
 
-void agregarNodoLis(int pos1, int pos2, struct Lista *buscado){
+void agregarNodoLis(int pos1, int pos2, struct Lista *buscado){ // agrega un nodo al struct lista
     struct NodeLis *nuevoNodo = (struct NodeLis *)malloc(sizeof(struct NodeLis));
     nuevoNodo -> sgte = NULL;
     nuevoNodo -> x = pos1;
@@ -173,7 +173,7 @@ void agregarNodoLis(int pos1, int pos2, struct Lista *buscado){
     buscado -> ultimoNode -> sgte = NULL;
 }
 
-void imprimirLis(struct Lista *lis){
+void imprimirLis(struct Lista *lis){ // imprime el struct lista
     struct NodeLis *i = lis -> primerNode;
     while(i != NULL) {
         printf("%i, %i\n", i->x, i->y);
@@ -181,7 +181,7 @@ void imprimirLis(struct Lista *lis){
     }
 }
 
-void buscarVivas(struct Columna *Matrix, struct Lista *Vivas){
+void buscarVivas(struct Columna *Matrix, struct Lista *Vivas){ // funciona igual ue buscar muertas pero buscando vivas
     struct Fila *i = Matrix -> primeraFila;
     struct Node *nuevoNodo = (struct Node *)malloc(sizeof(struct Node));
     nuevoNodo -> sgte = NULL;
@@ -207,7 +207,7 @@ void buscarVivas(struct Columna *Matrix, struct Lista *Vivas){
     }  
 }
 
-void buscarMuertas(struct Columna *Matrix, struct Lista *Muertas){
+void buscarMuertas(struct Columna *Matrix, struct Lista *Muertas){ // reviso en el tablero cuales fichas estan muertas
     struct Fila *i = Matrix -> primeraFila;
     struct Node *nuevoNodo = (struct Node *)malloc(sizeof(struct Node));
     nuevoNodo -> sgte = NULL;
@@ -218,12 +218,12 @@ void buscarMuertas(struct Columna *Matrix, struct Lista *Muertas){
     esp2 = 0;
     Muertas -> primerNode == NULL;
     Muertas -> ultimoNode == NULL;
-    while(i != NULL) {
+    while(i != NULL) { //recorro la matriz buscando ficahs muertas
         x = i -> primerNode;
         esp2 = 0;
         while(x != NULL){
             if (x -> viva == 0){
-                agregarNodoLis(esp1, esp2, Muertas);
+                agregarNodoLis(esp1, esp2, Muertas); // agrego a la lsta de muertas la posicion de la ficha si esta está muerta
             }
             x = x -> sgte;
             esp2++;
@@ -233,26 +233,26 @@ void buscarMuertas(struct Columna *Matrix, struct Lista *Muertas){
     }  
 }
 
-void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int filas, int columnas, struct Lista *Mueren){
+void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int filas, int columnas, struct Lista *Mueren){// revisa cual de las fichas vivas tengo que cambiar por muertas
     struct NodeLis *Nod = Vivas -> primerNode;
-    int arax;
-    int aray;
-    int adx;
-    int ady;
-    int ddx;
-    int ddy;
-    int dax;
-    int day;
-    int aax;
-    int aay;
-    int aix;
+    int arax; //arriba arriba fila
+    int aray; //arriba arriba columna
+    int adx; //aariba derecha fila
+    int ady; //arriba derecha columna
+    int ddx; //derecha derecha 
+    int ddy; //derecha derecha
+    int dax; //der abajo
+    int day; //de abjao
+    int aax; // abajo abajo
+    int aay; 
+    int aix; //abajo izq
     int aiy;
-    int iix;
+    int iix; //izq izq
     int iiy;
-    int iax;
+    int iax; //izq arriba
     int iay;
-    int x;
-    int y;
+    int x; //fila actual
+    int y; //columan actual 
     int contador;
     Mueren -> primerNode == NULL;
     Mueren -> ultimoNode == NULL;
@@ -264,27 +264,27 @@ void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int 
 
         arax = x - 1;
         aray = y;
-        if (arax >= 0 && arax < filas  && aray >= 0 && aray < columnas ){
+        if (arax >= 0 && arax < filas  && aray >= 0 && aray < columnas ){ // reviso si esta posicion (arriba arriba) esta dentro del tablero, se reptie para todos ==
             //printf("entro %i, %i  ###  revisando: %i, %i\n", x, y, arax, aray);
             struct Fila *i = Matrix -> primeraFila;
             struct Node *x;
-            if (arax == 0 && aray == 0){
+            if (arax == 0 && aray == 0){ //si la posicion arriba arriba == 0,0
                 x = i->primerNode;
             }
-            else if (arax == 0){
+            else if (arax == 0){ //si la posicion arriba arriba == 0,y
                 x = i -> primerNode;
                 for(int z = 0; z < aray; z++){
                     x = x -> sgte;
                 }
             }
-            else if (aray == 0){
+            else if (aray == 0){ //si la posicion arriba arriba == x,0
                 for(int p = 0; p < arax; p++) {
                     i = i -> sgteFila;
                 }
                 x = i -> primerNode;
             }
             else{
-                for(int p = 0; p < arax; p++) {
+                for(int p = 0; p < arax; p++) { //si la posicion arriba arriba == x,y siendo x e y cualquier nuemro menos 0
                     i = i -> sgteFila;
                 }
                 x = i -> primerNode;
@@ -293,7 +293,7 @@ void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int 
                 }
             }
             //printf("viva: %i\n", x->viva);
-            if (x->viva == 1){
+            if (x->viva == 1){ // si arriba arriba  esta viva le agrego al contador 1 para luego revisar si la pieza sigue viva o muere
                 contador ++;
             }
         }
@@ -551,7 +551,7 @@ void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int 
         }
 
         //printf("contador: %i\n", contador);
-        if (contador != 2 && contador != 3){
+        if (contador != 2 && contador != 3){ // reviso si la pieza vive o muere y si muere la agrego a la lista de matar
             agregarNodoLis(x, y, Mueren);
         }
         Nod = Nod -> sgte;
@@ -559,7 +559,7 @@ void revisar_cambio_ficha_viva(struct Lista *Vivas, struct Columna *Matrix, int 
     }
 }
 
-void revisar_cambio_ficha_muerta(struct Lista *Muertas, struct Columna *Matrix, int filas, int columnas, struct Lista *Viven){
+void revisar_cambio_ficha_muerta(struct Lista *Muertas, struct Columna *Matrix, int filas, int columnas, struct Lista *Viven){ // funciona basicamente igual que revisar_cambio_fichas_vivas solo que busca 1
     struct NodeLis *Nod = Muertas -> primerNode;
     int arax;
     int aray;
@@ -884,19 +884,19 @@ void revisar_cambio_ficha_muerta(struct Lista *Muertas, struct Columna *Matrix, 
     }
 }
 
-void cambiar_matrix(struct Lista *Viven, struct Lista *Mueren, struct Columna *Matrix, int filas, int columnas){
+void cambiar_matrix(struct Lista *Viven, struct Lista *Mueren, struct Columna *Matrix, int filas, int columnas){ //acmbio el tablero con los nuevo estados de las piezas
     struct NodeLis *Nod = Viven -> primerNode;
     int xx;
     int yy;
 
-    while (Nod != NULL){
+    while (Nod != NULL){ // de las fichas muertas que tengo que cambiar por vivas las cambio
         xx = Nod -> x;
         yy = Nod -> y;
         agregarFichaViva(Matrix, xx, yy);
         Nod = Nod -> sgte;
     }
-    Nod = Mueren -> primerNode;
-    while (Nod != NULL){
+    Nod = Mueren -> primerNode; 
+    while (Nod != NULL){ // de las fichas vivas que tengo que matar las cambio
         xx = Nod -> x;
         yy = Nod -> y;
         agregarFichaMuerta(Matrix, xx, yy);
@@ -910,19 +910,20 @@ int main(int argc, char *argv[]){
     int columnas = atoi(argv[3]);
     int vivas = atoi(argv[4]);
     int threads = atoi(argv[5]);
+    int mantener;
     char numero_viva[10];
     pid_t pids[4];
-    struct Columna *Matrix = (struct Columna *)malloc(sizeof(struct Columna));
-    struct Lista *Vivas = (struct Lista *)malloc(sizeof(struct Lista));
-    struct Lista *Mueren = (struct Lista *)malloc(sizeof(struct Lista));
-    struct Lista *Muertas = (struct Lista *)malloc(sizeof(struct Lista));
-    struct Lista *Viven = (struct Lista *)malloc(sizeof(struct Lista));
+    struct Columna *Matrix = (struct Columna *)malloc(sizeof(struct Columna)); // matrix el el tablero que esta compuesto por una lista de lista de nodos
+    struct Lista *Vivas = (struct Lista *)malloc(sizeof(struct Lista)); // lo uso para guardar las posiciones de las fichas vivas de cada iteracion
+    struct Lista *Mueren = (struct Lista *)malloc(sizeof(struct Lista)); // lo uso para guardar las posiciones de las fichas que mueren en cada iteracion
+    struct Lista *Muertas = (struct Lista *)malloc(sizeof(struct Lista));// lo uso para guardar las posiciones de las fichas muertas de cada iteracion
+    struct Lista *Viven = (struct Lista *)malloc(sizeof(struct Lista));// lo uso para guardar las posiciones de las fichas que viven en cada iteracion
     Matrix -> primeraFila = NULL;
     Matrix -> ultimaFila = NULL;
 
     for (int i = 0; i < filas; i++) 
     {
-        agregarFila(Matrix);
+        agregarFila(Matrix); //al tablero le agrego cada fila representada como una lista
         if (i == 0)
         {
             Matrix -> ultimaFila -> primerNode = NULL;
@@ -930,63 +931,68 @@ int main(int argc, char *argv[]){
         }
         for (int o = 0; o < columnas; o++)
         {
-             agregarNodo(Matrix -> ultimaFila);
-             Matrix -> ultimaFila -> ultimoNode -> viva = 0; 
+             agregarNodo(Matrix -> ultimaFila); // a cada fila le agrego las columnas
+             Matrix -> ultimaFila -> ultimoNode -> viva = 0;  //seteo cada nodo con un 0 que significa muerta
         }
     }
 
-    for (int i = 0; i < vivas; i++)
+    for (int i = 0; i < vivas; i++) // pido las posiciones que me dicen con nodos vivos (1)
     {
         input("Agregue la posicion de una ficha viva:", numero_viva, sizeof(numero_viva));
         char a = numero_viva[0];
         char b = numero_viva[2];
-        agregarFichaViva(Matrix, a - '0', b - '0');
+        agregarFichaViva(Matrix, a - '0', b - '0'); //cambio la posicion con un 1
     }
     
     printf("\n\nTablero Inicial:\n");
     imprimirMatrix(Matrix);
+    printf("\n\n\n");
 
     for (int i = 0; i < 4; i++){
         pids[i] = fork();
         if (pids[i] == 0){
-            printf("\n\n\n");
-            for (int rep = 0; rep < iteraciones; rep ++){
+            for (int rep = 0; rep < iteraciones; rep ++){ // repito la cantida de veces que me piden iterar
                 // imprimirMatrix(Matrix);
-                buscarVivas(Matrix, Vivas);
+                buscarVivas(Matrix, Vivas); //busco las fichas vivas en el tablero y las guardo en la lista Vivas
                 // printf("vivas\n");
                 // imprimirLis(Vivas);
                 // printf("vivas\n");
-                revisar_cambio_ficha_viva(Vivas, Matrix, filas, columnas, Mueren);
+                revisar_cambio_ficha_viva(Vivas, Matrix, filas, columnas, Mueren); // reviso de cuales de las listas Vivas tengo que cambiarlas por muertas y las guardo en Mueren
                 // printf("mueren\n");
                 // imprimirLis(Mueren);
                 // printf("mueren\n");
-                buscarMuertas(Matrix, Muertas);
+                buscarMuertas(Matrix, Muertas); //busco las fichas muertas en el tablero y las guardo en la lista Muertas
                 // printf("muertas\n");
                 // imprimirLis(Muertas);
                 // printf("muertas\n");
-                revisar_cambio_ficha_muerta(Muertas, Matrix, filas, columnas, Viven);
+                revisar_cambio_ficha_muerta(Muertas, Matrix, filas, columnas, Viven);// reviso de cuales de las listas Muertas tengo que cambiarlas por vivas y las guardo en Viven
                 // printf("viven\n");
                 // imprimirLis(Viven);
                 // printf("viven\n");
-                cambiar_matrix(Viven, Mueren, Matrix, filas, columnas);
+                cambiar_matrix(Viven, Mueren, Matrix, filas, columnas); //modifico el tablero (Matrix) con las fichas vivas y muertas correspondientes
                 // imprimirMatrix(Matrix);
+                // write(mypipdefd[1], "working", 7);
             }
+            
+            
             printf("Tablero Final:\n");
-            imprimirMatrix(Matrix);
 
+            imprimirMatrix(Matrix);
             liberarMemoriaCol(Matrix);
             liberarMemoriaLis(Vivas);
             liberarMemoriaLis(Muertas);
             liberarMemoriaLis(Viven);
             liberarMemoriaLis(Mueren);
+
+            
             _exit(0);
             // printf("%i %i %i %i %i\n", iteraciones, filas, columnas, vivas, threads);  
         }
     }
+    
     pid_t fin;
-
-    fin = wait(NULL);
-    printf("child pid%d\n", fin);
+    fin = wait(NULL); //espera al primer proceso que termine
+    printf("child pid%d\n", fin); // imprime el PID del primer hijo en terminar, ## no c si sirve pero ñe
     exit(0);
 
 }
