@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -910,6 +911,7 @@ int main(int argc, char *argv[]){
     int vivas = atoi(argv[4]);
     int threads = atoi(argv[5]);
     char numero_viva[10];
+    pid_t pids[4];
     struct Columna *Matrix = (struct Columna *)malloc(sizeof(struct Columna));
     struct Lista *Vivas = (struct Lista *)malloc(sizeof(struct Lista));
     struct Lista *Mueren = (struct Lista *)malloc(sizeof(struct Lista));
@@ -940,37 +942,51 @@ int main(int argc, char *argv[]){
         char b = numero_viva[2];
         agregarFichaViva(Matrix, a - '0', b - '0');
     }
+    
     printf("\n\nTablero Inicial:\n");
     imprimirMatrix(Matrix);
-    printf("\n\n\n");
-    for (int rep = 0; rep < iteraciones; rep ++){
-        // imprimirMatrix(Matrix);
-        buscarVivas(Matrix, Vivas);
-        // printf("vivas\n");
-        // imprimirLis(Vivas);
-        // printf("vivas\n");
-        revisar_cambio_ficha_viva(Vivas, Matrix, filas, columnas, Mueren);
-        // printf("mueren\n");
-        // imprimirLis(Mueren);
-        // printf("mueren\n");
-        buscarMuertas(Matrix, Muertas);
-        // printf("muertas\n");
-        // imprimirLis(Muertas);
-        // printf("muertas\n");
-        revisar_cambio_ficha_muerta(Muertas, Matrix, filas, columnas, Viven);
-        // printf("viven\n");
-        // imprimirLis(Viven);
-        // printf("viven\n");
-        cambiar_matrix(Viven, Mueren, Matrix, filas, columnas);
-        // imprimirMatrix(Matrix);
-    }
-    printf("Tablero Final:\n");
-    imprimirMatrix(Matrix);
 
-    liberarMemoriaCol(Matrix);
-    liberarMemoriaLis(Vivas);
-    liberarMemoriaLis(Muertas);
-    liberarMemoriaLis(Viven);
-    liberarMemoriaLis(Mueren);
-    // printf("%i %i %i %i %i\n", iteraciones, filas, columnas, vivas, threads);  
+    for (int i = 0; i < 4; i++){
+        pids[i] = fork();
+        if (pids[i] == 0){
+            printf("\n\n\n");
+            for (int rep = 0; rep < iteraciones; rep ++){
+                // imprimirMatrix(Matrix);
+                buscarVivas(Matrix, Vivas);
+                // printf("vivas\n");
+                // imprimirLis(Vivas);
+                // printf("vivas\n");
+                revisar_cambio_ficha_viva(Vivas, Matrix, filas, columnas, Mueren);
+                // printf("mueren\n");
+                // imprimirLis(Mueren);
+                // printf("mueren\n");
+                buscarMuertas(Matrix, Muertas);
+                // printf("muertas\n");
+                // imprimirLis(Muertas);
+                // printf("muertas\n");
+                revisar_cambio_ficha_muerta(Muertas, Matrix, filas, columnas, Viven);
+                // printf("viven\n");
+                // imprimirLis(Viven);
+                // printf("viven\n");
+                cambiar_matrix(Viven, Mueren, Matrix, filas, columnas);
+                // imprimirMatrix(Matrix);
+            }
+            printf("Tablero Final:\n");
+            imprimirMatrix(Matrix);
+
+            liberarMemoriaCol(Matrix);
+            liberarMemoriaLis(Vivas);
+            liberarMemoriaLis(Muertas);
+            liberarMemoriaLis(Viven);
+            liberarMemoriaLis(Mueren);
+            _exit(0);
+            // printf("%i %i %i %i %i\n", iteraciones, filas, columnas, vivas, threads);  
+        }
+    }
+    pid_t fin;
+
+    fin = wait(NULL);
+    printf("child pid%d\n", fin);
+    exit(0);
+
 }
