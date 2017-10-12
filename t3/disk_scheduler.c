@@ -51,19 +51,15 @@ void remove_nodo(struct Queue *list, int id){
         }
         i = i -> sgte;
         if (aux != NULL){
-            //printf("\n-> Se ha eliminado %i de la lista %s\n", aux -> id, lista -> nombre);
             free(aux);
         }
-        
     }
-
 }
 
 
 
 void fcfs (struct Queue *request){
     struct nodo *node = request -> firstNode;
-    int fin = request -> lastNode -> id;
     char full[500];   
     char aux[20];
     int path_len = 0;
@@ -95,10 +91,10 @@ void fcfs (struct Queue *request){
             strcat(full, ",");
         }   
     }
+
     printf("%s\n", full);
     printf("%i\n", path_len);
     printf("%iT+%iD msec\n",path_len, changes);
-
 }
 void sstf (struct Queue *request){
     struct nodo *node;
@@ -160,8 +156,8 @@ void sstf (struct Queue *request){
     printf("%s\n", full);
     printf("%i\n", path_len);
     printf("%iT+%iD msec\n",path_len, changes);
-
 }
+
 void scan (struct Queue *request){
     struct nodo *node;
     char full[500];   
@@ -169,9 +165,9 @@ void scan (struct Queue *request){
     int path_len = 0;
     int changes = 0;
     int prev = -1;
+    int off = 0;
 
     node = request -> firstNode;
-    int ini = node -> id;
     int val_act = node -> value;
     int id_actt = node -> id;
     node = node -> sgte;
@@ -183,30 +179,39 @@ void scan (struct Queue *request){
         RET:
         while (node != NULL){
             if (node -> id != id_actt){
-                if (abs(node -> value - val_act) < comp && val_act <= node -> value){
-                    comp = abs(node -> value - val_act);
-                    id_comp = node -> id;
-                    val_comp = node -> value;
+
+                if (abs(node -> value - val_act) < comp){
+                    if (off == 0 && val_act <= node -> value){
+                        comp = abs(node -> value - val_act);
+                        id_comp = node -> id;
+                        val_comp = node -> value;
+                    }
+                    else if (off ==1 && val_act >= node -> value){
+                        comp = abs(node -> value - val_act);
+                        id_comp = node -> id;
+                        val_comp = node -> value;
+                    }
                 }
             }
             node = node -> sgte;
         }   
         if (id_actt != id_comp){
-            if (val_comp < val_act){ 
+            if (val_comp < val_act && off == 0){ 
                 remove_nodo(request, id_actt);
-                changes ++;
                 changes ++;
                 int old = val_act;
                 
+                val_act = 0;
                 node = request -> firstNode;
 
                 while (node != NULL){
-                    if (node -> value < val_act){
+                    if (node -> value >= val_act){
                         val_act = node -> value;
                         id_actt = node -> id;
                     }
                     node = node -> sgte;
                 }
+                off = 1;
                 sprintf(aux, "%d", val_act);
                 strcat(full, aux);
                 strcat(full, ",");
@@ -251,7 +256,8 @@ void clook (struct Queue *request){
     int path_len = 0;
     int changes = 0;
     int prev = -1;
-
+    int old = 0;
+    int off = 0;
     node = request -> firstNode;
     int ini = node -> id;
     int val_act = node -> value;
@@ -276,8 +282,8 @@ void clook (struct Queue *request){
         if (id_actt != id_comp){
             if (val_comp < val_act){
                 remove_nodo(request, id_actt);
-                path_len += 256;
-                path_len += 256 - val_act;
+                old = val_act;
+                off = 1;
                 id_actt = ini;
                 val_act = 0;
                 comp = 256;
@@ -297,7 +303,12 @@ void clook (struct Queue *request){
             if (request -> firstNode -> sgte != NULL){
                 strcat(full, ",");
             }
-            path_len += comp;
+            if (off == 1){
+                path_len += (old - comp);
+                off = 0;
+            }else{
+                path_len += comp;
+            }
            
             id_actt = id_comp;
             prev = val_act;
