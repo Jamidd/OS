@@ -16,11 +16,15 @@ struct Tlb
 {
 	long int page_number[32];
 	long int frame[32];
+	long int time[32]; // LRU -> indice corresponde al numero de entrada
+	long int pos[32]; // FIFO -> indice corresponde al numero de entrada
 };
 
 struct Ram
 {
 	long int frame_used[128];
+	long int time[128]; // LRU -> indice corresponde al numero de frame
+	long int pos[128]; // LRU -> indice corresponde al numero de frame
 };
 
 struct Tabla TablaPagina;
@@ -113,6 +117,7 @@ void agregarTLB(int page, int frame, int politica){
 		{
 			TLB.page_number[i] = page;
 			TLB.frame[i] = frame;
+			TLB.time[i] = 0;
 			return;
 		}
 		
@@ -122,12 +127,37 @@ void agregarTLB(int page, int frame, int politica){
 
 		// agregamos por LRU
 
+		int candidato = 0;
+		int tiempo = 0;
+		for (int i = 0; i < 32; ++i)
+		{
+			if (TLB.time[i] > tiempo) {
+				candidato = i;
+			}
+		}
+
+		TLB.page_number[candidato] = page;
+		TLB.frame[candidato] = frame;
+		TLB.time[candidato] = 0;
 
 	}
 
 	else {
 
 		// agregamos por FIFO
+
+		int candidato = 0;
+		int pos = 0;
+		for (int i = 0; i < 32; ++i)
+		{
+			if (TLB.pos[i] > pos) {
+				candidato = i;
+			}
+		}
+
+		TLB.page_number[candidato] = page;
+		TLB.frame[candidato] = frame;
+		TLB.pos[candidato] = 0;
 	
 	}
 
@@ -139,6 +169,8 @@ long int verificarFrameDisponible(int politica){
 	{
 		if (RAM.frame_used[i] == 0){
 			RAM.frame_used[i] = 1;
+			RAM.time[i] = 0;
+			RAM.pos[i] = 0;
 			return i;
 		}
 	}
@@ -147,12 +179,38 @@ long int verificarFrameDisponible(int politica){
 
 		// verificamos por LRU
 
+		int candidato = 0;
+		int tiempo = 0;
+		for (int i = 0; i < 128; ++i)
+		{
+			if (RAM.time[i] > tiempo) {
+				candidato = i;
+			}
+		}
+
+		RAM.time[candidato] = 0;
+
+		return candidato;
+
 
 	}
 
 	else {
 
 		// verificamos por FIFO
+
+		int candidato = 0;
+		int pos = 0;
+		for (int i = 0; i < 128; ++i)
+		{
+			if (RAM.pos[i] > pos) {
+				candidato = i;
+			}
+		}
+
+		RAM.pos[candidato] = 0;
+
+		return candidato;
 	
 	}
 
@@ -160,9 +218,41 @@ long int verificarFrameDisponible(int politica){
 
 }
 
+void aumentarTiempo(){
+	for (int i = 0; i < 32; ++i)
+	{
+		if (TLB.page_number[i] > -1) {
+			TLB.time[i] += 1;
+		}
+	}
+
+	for (int i = 0; i < 128; ++i)
+	{
+		if (RAM.frame_used[i] == 1) {
+			RAM.time[i] += 1;
+		}
+	}
+}
+
+void aumentarPos(){
+	for (int i = 0; i < 32; ++i)
+	{
+		if (TLB.page_number[i] > -1) {
+			TLB.pos[i] += 1;
+		}
+	}
+
+	for (int i = 0; i < 128; ++i)
+	{
+		if (RAM.frame_used[i] == 1) {
+			RAM.pos[i] += 1;
+		}
+	}
+}
+
 void handler(){
 
-	printf("PORCENTAJE_PAGE_FAULTS = %.0f %% \n", 100*cant_pagefault/cant_total);
+	printf("\nPORCENTAJE_PAGE_FAULTS = %.0f %% \n", 100*cant_pagefault/cant_total);
 	printf("PORCENTAJE_TLB_HITS = %.0f %% \n", 100*cant_hit_tlb/cant_total);
 	printf("TABLA DE PAGINAS\n");
 	printf("page_number\tframe_number\n");
@@ -189,9 +279,7 @@ void handler(){
 		
 	}
 
-    
-
-    exit(1);
+    exit(0);
 }
 
 
@@ -199,7 +287,20 @@ void handler(){
 int main(int argc, char const *argv[])
 {
 	signal(SIGINT, handler);
-	int politica = 0;
+	if (argc != 2) {
+		printf("Error Argumentos\n");
+		exit(1);
+	}
+
+
+	int politica;
+
+	if (strcmp(argv[1], "lru") == 0){
+		politica = 0;
+	} else {
+		politica = 1;
+	}
+	
 
 	for (int i = 0; i < 256; ++i)
 	{
@@ -212,15 +313,15 @@ int main(int argc, char const *argv[])
 	{
 		TLB.page_number[i] = -1;
 		TLB.frame[i] = -1;
+		TLB.time[i] = 0;
 	}
 
 
 		for (int i = 0; i < 128; ++i)
 	{
 		RAM.frame_used[i] = 0;
+		RAM.time[i] = 0;
 	}
-
-
 
 	while (1) {
 
@@ -235,7 +336,6 @@ int main(int argc, char const *argv[])
 		cant_total += 1;
 		long int n = atoi(n_str);
 		toBinary16bitString(n, str_binary);
-		printf("%s\n", str_binary);
 		for (int i = 0; i < 8; ++i)
 		{
 			appendCharToString(str_page, str_binary[i]);
@@ -256,7 +356,7 @@ int main(int argc, char const *argv[])
 			if (TLB.page_number[i] == page){
 				miss = 0; // no hay miss
 				cant_hit_tlb += 1;
-				printf("HIT!\n");
+				TLB.time[i] = 0;
 				break; 
 			}
 		}
@@ -267,13 +367,13 @@ int main(int argc, char const *argv[])
 			int page_fault = 1; // suponemos page fault
 			if (TablaPagina.frame[page] > -1){
 				page_fault = 0;
+				RAM.time[TablaPagina.frame[page]] = 0;
 				agregarTLB(page, TablaPagina.frame[page], politica);
 			}
 
 			if (page_fault) {
 
 				cant_pagefault += 1;
-				printf("PageFault!\n");
 				int frame_disponible = verificarFrameDisponible(politica);
 				// agregamos frame a TablaPagina
 				TablaPagina.frame[page] = frame_disponible;
@@ -282,7 +382,12 @@ int main(int argc, char const *argv[])
 			}
 		}
 
+		aumentarTiempo();
+		aumentarPos();
+
 	}
+
+	
 
 
 
