@@ -1,5 +1,5 @@
 all: mem_simulator.c 
-	gcc -o mem_simulator mem_simulator2.c -lm
+	gcc -o mem_simulator mem_simulator.c -lm
 
 clean: 
 	$(RM) mem_simulator
