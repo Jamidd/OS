@@ -28,7 +28,7 @@ void add_nodo(struct Queue *list){
         list -> lastNode -> sgte = new;
         list -> lastNode = new;
     }
-    list -> lastNode -> sgte = NULL;
+    list -> lastNode -> sgte = NULL; 
 };
 
 void remove_nodo(struct Queue *list, int id){
@@ -91,11 +91,12 @@ void fcfs (struct Queue *request){
             strcat(full, ",");
         }   
     }
-
+    free(node);
     printf("%s\n", full);
     printf("%i\n", path_len);
     printf("%iT+%iD msec\n",path_len, changes);
 }
+
 void sstf (struct Queue *request){
     struct nodo *node;
     char full[500];   
@@ -352,8 +353,10 @@ int main(int argc, char *argv[])
         id ++;
         add_nodo(request);
         request -> lastNode -> id = id;
-        request -> lastNode -> value = value;    }
+        request -> lastNode -> value = value;}
+    free(line);
     fclose(fptr);
+
     //printf("%i\n", request -> firstNode -> id);
     if (strcmp(scheduler, "fcfs") == 0){
         fcfs(request);
@@ -367,5 +370,7 @@ int main(int argc, char *argv[])
     else if (strcmp(scheduler, "c-look") == 0){
         clook(request);
     }
+    
+    free(request);
     return 0;
 }
