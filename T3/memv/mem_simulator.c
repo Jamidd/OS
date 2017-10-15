@@ -127,11 +127,12 @@ void agregarTLB(int page, int frame, int politica){
 		// agregamos por LRU
 
 		int candidato = 0;
-		int freq = 0;
+		int freq = TLB.freq[0];
 		for (int i = 0; i < 32; ++i)
 		{
 			if (TLB.freq[i] < freq) {
 				candidato = i;
+				freq = TLB.freq[i];
 			}
 		}
 
@@ -151,6 +152,7 @@ void agregarTLB(int page, int frame, int politica){
 		{
 			if (TLB.pos[i] > pos) {
 				candidato = i;
+				pos = TLB.pos[i];
 			}
 		}
 
@@ -178,11 +180,12 @@ long int verificarFrameDisponible(int politica){
 		// verificamos por LRU
 
 		int candidato = 0;
-		int freq = 0;
+		int freq = RAM.freq[0];
 		for (int i = 0; i < 128; ++i)
 		{
 			if (RAM.freq[i] < freq) {
 				candidato = i;
+				freq = RAM.freq[i];
 			}
 		}
 
@@ -203,6 +206,7 @@ long int verificarFrameDisponible(int politica){
 		{
 			if (RAM.pos[i] > pos) {
 				candidato = i;
+				pos = RAM.pos[i];
 			}
 		}
 
