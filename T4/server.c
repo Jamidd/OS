@@ -112,7 +112,7 @@ void eliminarCliente( char id[2] ) {
 	while (i != NULL) {
 		if (i -> id_contrincante == id) {
 			i -> id_contrincante[0] = -1;
-			strcpy(i -> nickname_contrincante, NULL);
+			strcpy(i -> nickname_contrincante, "");
 		}
 
 		i = i -> sgte;

@@ -50,8 +50,8 @@ void matchMakingList(int clientSocket) {
 	char ask_f3[1];
 	ask_f3[0] = fid;
 	sendMessage(clientSocket, ask_f3);
-	char* message_answer = malloc( 1024 );
-	message_answer = recieveMessage(clientSocket, message_answer);
+	char message_answer[1024];
+	recv(clientSocket, message_answer, 1024, 0);
 	char cant_clientes_str[4];
 	for (int i = 0; i < 4; ++i)
 	{
@@ -140,7 +140,7 @@ int main(int argc, char const *argv[])
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
     printf("/i:id -> Invite Player ID, /a -> Available Players, /w Wait Invitation \n");
-    char* message = malloc(sizeof(char)*1024);
+    char message[1024];
     while (1) {
 
 		
@@ -186,6 +186,7 @@ int main(int argc, char const *argv[])
 			//sendMessage(socket, message);
 
 		}
+
 		
     }
 	
