@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8090
 
 
 struct Cliente
@@ -33,13 +33,13 @@ void agregarContrincante(char id1[2], char id2[2]) {
 	struct Cliente *i = primero;
 	struct Cliente *i2 = primero;
 	while (i != NULL){
-		if (i -> id == id1){
+		if (i -> id[0] == id1[0] && i -> id[1] == id1[1]){
 			while (i2 != NULL){
-				if (i2 -> id == id2){
+				if (i2 -> id[0] == id2[0] && i2 -> id[1] == id2[1]){
 					strcpy(i -> nickname_contrincante, i2 -> nickname);
 					strcpy(i2 -> nickname_contrincante, i -> nickname);
 					strcpy(i -> id_contrincante, i2 -> id);
-					strcpy(i2 -> id_contrincante, i2 -> id);
+					strcpy(i2 -> id_contrincante, i -> id);
 					return;
 				}
 				i2 = i2 -> sgte;
@@ -127,6 +127,20 @@ int buscarSocketPorID( char id[2] ) {
 	while(i != NULL) {
 		if ( i -> id[0] == id[0] && i -> id[1] == id[1] ){
 			return i -> socket;
+		}
+
+		i = i -> sgte;
+	}
+
+	return 0;
+}
+
+int buscarSocketContrincantePorID( char id[2] ) {
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		if ( i -> id[0] == id[0] && i -> id[1] == id[1] ){
+			return buscarSocketPorID(i -> id_contrincante);
 		}
 
 		i = i -> sgte;
@@ -245,7 +259,7 @@ void *listenClient(void *socket_void){
 				avance += 3 + strlen(j -> nickname) + 1;
 				j = j -> sgte;
 			}
-			send(socket, returnMessage, 1024,0);
+			send(socket, returnMessage, 1024, 0);
 
 
 			
@@ -266,12 +280,50 @@ void *listenClient(void *socket_void){
 			{
 				message[i+4] = nickname[i];
 			}
-			send(socket_receptor, message, 1024,0);
+			send(socket_receptor, message, 1024, 0);
 
-
-			
 		}
 		else if ( fid == 5 ) {
+			char id_receptor[2];
+			id_receptor[0] = message[3];
+			id_receptor[1] = message[4];
+			int socket_receptor = buscarSocketPorID( id_receptor );
+
+			char respuesta[3];
+			int r_fid = 4;
+			respuesta[0] = r_fid;
+			respuesta[1] = 1;
+			respuesta[2] = message[2];
+
+			send(socket_receptor, respuesta, 1024, 0);
+
+			if (respuesta[2] == "1"[0]){
+				char a[2];
+				sprintf(a, "%i", id[0]*100 + id[1]);
+				printf("%s\n", a);
+				char b[2];
+				sprintf(b, "%i", id_receptor[0]*100 + id_receptor[1]);
+				printf("%s\n", b);
+				agregarContrincante(id, id_receptor);
+
+				char mensaje[7];
+				int r_fid = 7;
+				mensaje[0] = r_fid;
+				mensaje[1] = 5;
+				mensaje[2] = id[0];
+				mensaje[3] = id[1];
+				mensaje[4] = id_receptor[0];
+				mensaje[5] = id_receptor[1];
+				mensaje[6] = 1;
+				send(socket, mensaje, 1024, 0);
+
+				mensaje[2] = id[0];
+				mensaje[3] = id[1];
+				mensaje[4] = id_receptor[0];
+				mensaje[5] = id_receptor[1];
+				mensaje[6] = 0;
+				send(socket_receptor, mensaje, 1024, 0);
+			}
 			
 		}
 		else if ( fid == 6 ) {
@@ -281,7 +333,10 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 8 ) {
-			
+			int socket_receptor;
+			socket_receptor = buscarSocketContrincantePorID(id);
+			printf("enviando movida a socket |%i|\n",socket_receptor);
+			send(socket_receptor, message, 1024, 0);
 		}
 		else if ( fid == 9 ) {
 			

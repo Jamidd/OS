@@ -8,11 +8,13 @@
 #include <netinet/in.h>
 #include "math.h"
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8090
 
-int socket_destino;
+char id_destino[2];
 
 char id[2];
+
+int color;
 
 char* recieveMessage(int socket, char* message){
   printf("♔ ... \n");
@@ -21,10 +23,10 @@ char* recieveMessage(int socket, char* message){
 }
 
 void sendMessage(int socket, char* message){
-  send(socket, message, 1024,0);
+    send(socket, message, 1024,0);
 }
 
-void iniviteClient( int clientSocket, char id_str_4[4] ){
+int iniviteClient(int clientSocket, char id_str_4[4] ){
 	int id_int = atoi(id_str_4);
 	char id[2];
 	int c1, c2;
@@ -41,8 +43,43 @@ void iniviteClient( int clientSocket, char id_str_4[4] ){
 	sendMessage(clientSocket, ask_f4);
 	char* message_answer = malloc( 1024 );
 	message_answer = recieveMessage(clientSocket, message_answer);
+	printf("la respuesta es: |%c|\n", message_answer[2]);
+	if (message_answer[2] == "1"[0]){
+		strcpy(id_destino, id);
+		return 1;
+	}
+	return 0;
+}
 
+void sendAsnwerToInvitation(int clientSocket, char answerr[1], int id_answ ){
+	char id[2];
+	int c1, c2;
+	c1 = id_answ/100;
+	c2 = id_answ-(id_answ/100)*100;
+	id[0] = c1;
+	id[1] = c2;
+	int fid = 5;
+	char answer[5];
+	answer[0] = fid;
+	answer[1] = 3;
+	answer[2] = answerr[0];
+	answer[3] = id[0];
+	answer[4] = id[1];
+	sendMessage(clientSocket, answer);
+	return;
+}
 
+void sendMove(int client_socket, char filao, char colo, char fild, char cold, char pieza){
+	char mensaje[7];
+	int fid = 8;
+	mensaje[0] = fid;
+	mensaje[1] = 5;
+	mensaje[2] = colo;
+	mensaje[3] = filao;
+	mensaje[4] = cold;
+	mensaje[5] = fild;
+	mensaje[6] = pieza;
+	sendMessage(client_socket, mensaje);
 }
 
 void matchMakingList(int clientSocket) {
@@ -143,7 +180,7 @@ int main(int argc, char const *argv[])
     char message[1024];
     while (1) {
 
-		
+    	INICIO:
 		printf("\nYour Message: ");
 		scanf("%s", message);
 		if (message[0] == '/') {
@@ -154,32 +191,67 @@ int main(int argc, char const *argv[])
 					id_invite[i] = message[i+3];
 				}
 				printf("Inviting %s\n", id_invite);
-				iniviteClient(socket, id_invite);
+				int gameon;
+				gameon = iniviteClient(socket, id_invite);
+				if (gameon == 0){
+					goto INICIO;
+				}
 			} 
 			else if (message[1] == 'a') {
 				matchMakingList(socket);
+				goto INICIO;
 			}
 			else if (message[1] == 'w') {
 				printf("waiting\n");
-				while(1) {
-					char* msg = recieveMessage(socket, message);
-					int fid = msg[0];
-					if (fid == 5) {
-						int c1, c2;
-						c1 = msg[2];
-						c2 = msg[3];
-						int id_emisor = c1*100+c2;
-						char emisor[40];
-						for (int i = 0; i < strlen(msg)+1; ++i)
-						{
-							emisor[i] = msg[i+4];
-						}
-						printf("%i - %s Invited you, 1 - Accept, 0 - Decline\n", id_emisor, emisor);
-						break;
+			}
+
+			while(1) {
+				char* msg = recieveMessage(socket, message);
+				int fid = msg[0];
+				if (fid == 5) {
+					int c1, c2;
+					c1 = msg[2];
+					c2 = msg[3];
+					int id_emisor = c1*100+c2;
+					char emisor[40];
+					for (int i = 0; i < strlen(msg)+1; ++i)
+					{
+						emisor[i] = msg[i+4];
+					}
+					printf("%i - %s Invited you, 1 - Accept, 0 - Decline\n", id_emisor, emisor);
+					int decicion = 0;
+					scanf("%i", &decicion);
+					if (decicion == 1){
+						sendAsnwerToInvitation(socket, "1", id_emisor);
+						id_destino[0] = id_emisor/100;
+						id_destino[1] = id_emisor-(id_emisor/100)*100;
+					}
+					else if (decicion == 0){
+						sendAsnwerToInvitation(socket, "0", id_emisor);
 					}
 				}
-				
-				
+				else if (fid == 7){
+					if (msg[6] == 1){
+						color = 1; //negro
+						printf("soy negro\n");
+					}
+					else if (msg[6] == 0){
+						color = 0; //blanco
+						printf("soy blanco\n");
+						char mov[10];
+						printf("Cual es tu primer movimiento\n");
+						scanf("%s",mov);
+						sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+					}
+				}
+				else if (fid == 8){
+					printf(" el mov del otro jugador es: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
+					printf("cual va a ser tu movimiento\n");
+					char mov[10];
+					scanf("%s",mov);
+					sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+				}
+
 			}
 		} else {
 
