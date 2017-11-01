@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include "math.h"
 #define IP "0.0.0.0"
-#define PORT 8090
+#define PORT 8080
 
 char id_destino[2];
 
@@ -43,9 +43,11 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 	sendMessage(clientSocket, ask_f4);
 	char* message_answer = malloc( 1024 );
 	message_answer = recieveMessage(clientSocket, message_answer);
-	printf("la respuesta es: |%c|\n", message_answer[2]);
-	if (message_answer[2] == "1"[0]){
-		strcpy(id_destino, id);
+	printf("The answer is: |%c|\n", message_answer[2]);
+	if (message_answer[2] == '1'){
+		id_destino[0] = id[0];
+		id_destino[1] = id[1];
+		printf("!!\n");
 		return 1;
 	}
 	return 0;
@@ -176,7 +178,7 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    printf("/i:id -> Invite Player ID, /a -> Available Players, /w Wait Invitation \n");
+    printf("/i:id -> Invite Player ID, /a -> Available Players, /w Wait Invitation /q Quit\n");
     char message[1024];
     while (1) {
 
@@ -202,7 +204,22 @@ int main(int argc, char const *argv[])
 				goto INICIO;
 			}
 			else if (message[1] == 'w') {
+				char message[1];
+				message[0] = 17;
+				sendMessage(socket, message);
 				printf("waiting\n");
+			}
+			else if (message[1] == 'q') {
+				int fid = 9;
+				char message[1];
+				message[0] = fid;
+				sendMessage(socket, message);
+				char response[3];
+				recv(socket, response, 1024, 0);
+				exit(0);
+			}
+			else {
+				goto INICIO;
 			}
 
 			while(1) {
@@ -239,17 +256,50 @@ int main(int argc, char const *argv[])
 						color = 0; //blanco
 						printf("soy blanco\n");
 						char mov[10];
-						printf("Cual es tu primer movimiento\n");
+						printf("Cual es tu primer movimiento (/q Quit Game)\n");
 						scanf("%s",mov);
-						sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+						if (strcmp( mov, "/q" ) == 0) {
+							int fid = 9;
+							char message[1];
+							message[0] = fid;
+							sendMessage(socket, message);
+							char response[3];
+							recv(socket, response, 1024, 0);
+							exit(0);
+						} 
+						else {
+							sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+						}
+						
 					}
 				}
 				else if (fid == 8){
 					printf(" el mov del otro jugador es: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
-					printf("cual va a ser tu movimiento\n");
+					printf("cual va a ser tu movimiento (/q Quit Game)\n");
 					char mov[10];
 					scanf("%s",mov);
-					sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+					if (strcmp( mov, "/q" ) == 0) {
+						int fid = 9;
+						char message[1];
+						message[0] = fid;
+						sendMessage(socket, message);
+						char response[3];
+						recv(socket, response, 1024, 0);
+						exit(0);
+					}
+					else {
+						sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+					}
+				}
+				else if (fid == 10){
+					printf("Se ha salido el otro jugador\n");
+					int fid = 10;
+					char message[3];
+					message[0] = fid;
+					message[1] = 1;
+					message[2] = 0;
+					sendMessage(socket, message);
+					goto INICIO;
 				}
 
 			}

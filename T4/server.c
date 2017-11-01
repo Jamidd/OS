@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8090
+#define PORT 8080
 
 
 struct Cliente
@@ -19,7 +19,7 @@ struct Cliente
 	char id_contrincante[2];
 	char nickname[20];
 	char nickname_contrincante[20];
-	int disponible; // 1 -> Disponible, 0 -> Ocupado
+	int status; // 0 -> idle, 1 -> waiting, 2 -> playing
 
 	struct Cliente *sgte;
 
@@ -38,8 +38,10 @@ void agregarContrincante(char id1[2], char id2[2]) {
 				if (i2 -> id[0] == id2[0] && i2 -> id[1] == id2[1]){
 					strcpy(i -> nickname_contrincante, i2 -> nickname);
 					strcpy(i2 -> nickname_contrincante, i -> nickname);
-					strcpy(i -> id_contrincante, i2 -> id);
-					strcpy(i2 -> id_contrincante, i -> id);
+					i -> id_contrincante[0] = i2 -> id[0];
+					i -> id_contrincante[1] = i2 -> id[1];
+					i2 -> id_contrincante[0] = i -> id[0];
+					i2 -> id_contrincante[1] = i -> id[1];
 					return;
 				}
 				i2 = i2 -> sgte;
@@ -59,7 +61,7 @@ void agregarCliente(char id[2], int socket, char nickname[20]){
 	strcpy(nuevoCliente -> nickname, nickname);
 	nuevoCliente -> id_contrincante[0] = 0;
 	nuevoCliente -> id_contrincante[1] = 0;
-	nuevoCliente -> disponible = 1;
+	nuevoCliente -> status = 1;
 
 	if (primero == NULL) {
 
@@ -95,7 +97,7 @@ void eliminarCliente( char id[2] ) {
 
 		}
 
-		if (i -> id == id && i == primero) {
+		if (strcmp(i -> id, id) == 0 && i == primero) {
 			aux = i;
 			primero = i -> sgte;
 		}
@@ -106,16 +108,6 @@ void eliminarCliente( char id[2] ) {
 
 		}
 		
-	}
-
-	i = primero;
-	while (i != NULL) {
-		if (i -> id_contrincante == id) {
-			i -> id_contrincante[0] = -1;
-			strcpy(i -> nickname_contrincante, "");
-		}
-
-		i = i -> sgte;
 	}
 
 }
@@ -133,6 +125,31 @@ int buscarSocketPorID( char id[2] ) {
 	}
 
 	return 0;
+}
+
+void cambiarEstadoPorID( char id[2], int status ) {
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		if ( strcmp(i -> id, id) == 0 ){
+			i -> status = status;
+		}
+
+		i = i -> sgte;
+	}
+}
+
+void cambiarEstadoPorSocket( int socket, int status ) {
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		if ( i -> socket == socket ){
+			i -> status = status;
+		}
+
+		i = i -> sgte;
+	}
+
 }
 
 int buscarSocketContrincantePorID( char id[2] ) {
@@ -163,9 +180,21 @@ char* buscarNicknamePorSocket( int socket ) {
 	return NULL;
 }
 
+void eliminarContrincantePorSocket( int socket ) {
+	struct Cliente *i = primero;
+	while(i != NULL) {
+		if ( i -> socket == socket ){
+			i -> id_contrincante[0] = 0;
+			i -> id_contrincante[1] = 0;
+			strcpy(i -> nickname_contrincante, "");
+		}
+		i = i -> sgte; 
+	}
+}
+
 
 char* recieveMessage(int socket, char* message){
-  printf("Waiting message... ♔ \n");
+  printf("status message... ♔ \n");
   recv(socket, message, 1024, 0);
   return message;
 }
@@ -225,12 +254,14 @@ void *listenClient(void *socket_void){
 
 			struct Cliente *i = primero;
 			while (i != NULL) {
-				if (i -> disponible == 1) {
+				if (i -> status == 1) {
 					count++;
 					size += 3 + sizeof i -> nickname;
 				}
 				i = i -> sgte;
 			}
+
+			printf("SIZE: %i\n", size);
 
 			char returnMessage[size];
 			char count_str[4];
@@ -243,7 +274,7 @@ void *listenClient(void *socket_void){
 			int avance = 4;
 			struct Cliente *j = primero;
 			while (j != NULL) {
-				if (j -> disponible == 1) {
+				if (j -> status == 1) {
 					
 					returnMessage[avance] = j -> id[0];
 					returnMessage[avance+1] = j -> id[1];
@@ -259,6 +290,7 @@ void *listenClient(void *socket_void){
 				avance += 3 + strlen(j -> nickname) + 1;
 				j = j -> sgte;
 			}
+			printf("RET %s\n", returnMessage);
 			send(socket, returnMessage, 1024, 0);
 
 
@@ -297,14 +329,18 @@ void *listenClient(void *socket_void){
 
 			send(socket_receptor, respuesta, 1024, 0);
 
-			if (respuesta[2] == "1"[0]){
+			if (respuesta[2] == '1'){
+				/*
 				char a[2];
 				sprintf(a, "%i", id[0]*100 + id[1]);
 				printf("%s\n", a);
 				char b[2];
 				sprintf(b, "%i", id_receptor[0]*100 + id_receptor[1]);
 				printf("%s\n", b);
+				*/
 				agregarContrincante(id, id_receptor);
+				cambiarEstadoPorID(id, 2);
+				cambiarEstadoPorID(id_receptor, 2);
 
 				char mensaje[7];
 				int r_fid = 7;
@@ -339,6 +375,27 @@ void *listenClient(void *socket_void){
 			send(socket_receptor, message, 1024, 0);
 		}
 		else if ( fid == 9 ) {
+			char returnMessage[3];
+			returnMessage[0] = 9;
+			returnMessage[1] = 1;
+			returnMessage[2] = 0;
+			send(socket, returnMessage, 1024, 0);
+			char returnMessage2[4];
+			returnMessage2[0] = 10;
+			returnMessage2[1] = 1;
+			returnMessage2[2] = id[0];
+			returnMessage2[3] = id[1];
+			int socket_contrincante;
+			socket_contrincante = buscarSocketContrincantePorID(id);
+			send(socket_contrincante, returnMessage2, 1024, 0);
+			char resp_message_contrincante[3];
+			recv(socket, resp_message_contrincante, 1024, 0);
+			eliminarContrincantePorSocket(socket_contrincante);
+			cambiarEstadoPorSocket(socket_contrincante, 0);
+			eliminarCliente( id );
+			pthread_exit(NULL);
+
+
 			
 		}
 		else if ( fid == 10 ) {
@@ -361,6 +418,9 @@ void *listenClient(void *socket_void){
 		}
 		else if ( fid == 16 ) {
 			
+		}
+		else if ( fid == 17 ) {
+			cambiarEstadoPorID(id, 1);
 		}
 	}
 	return NULL;
