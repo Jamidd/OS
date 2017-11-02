@@ -16,6 +16,515 @@ char id[2];
 
 int color;
 
+
+char tablero[630] = "  | a | b | c | d | e | f | g | h |\n-----------------------------------\n1 |   |   |   |   |   |   |   |   |\n-----------------------------------\n2 |   |   |   |   |   |   |   |   |\n-----------------------------------\n3 |   |   |   |   |   |   |   |   |\n-----------------------------------\n4 |   |   |   |   |   |   |   |   |\n-----------------------------------\n5 |   |   |   |   |   |   |   |   |\n-----------------------------------\n6 |   |   |   |   |   |   |   |   |\n-----------------------------------\n7 |   |   |   |   |   |   |   |   |\n-----------------------------------\n8 |   |   |   |   |   |   |   |   |";
+
+void printtablero(char *blancos, char *negros){
+	/*
+	vamos a guardar en un string cada 2 bits (fila- columna) es una ficha y van rey-reina-alfil-alfil-cabalo-caballo-torre-torre-peon-peon-peon-peon-peon-peon-peon-peon
+	*/
+	char fil0[73] = "  | a | b | c | d | e | f | g | h |\n-----------------------------------\n";
+	char fil1[73] = "1 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil2[73] = "2 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil3[73] = "3 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil4[73] = "4 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil5[73] = "5 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil6[73] = "6 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil7[73] = "7 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+	char fil8[73] = "8 |   |   |   |   |   |   |   |   |\n-----------------------------------\n";
+
+	int col;
+	for(int i = 0; i < 32; i = i + 2){
+		if (blancos[i] == 1){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil1[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil1[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil1[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil1[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil1[col*4] = 101;
+			}else{ //peones
+				fil1[col*4] = 102;
+			}
+		}else if (blancos[i] == 2){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil2[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil2[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil2[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil2[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil2[col*4] = 101;
+			}else{ //peones
+				fil2[col*4] = 102;
+			}
+		}else if (blancos[i] == 3){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil3[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil3[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil3[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil3[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil3[col*4] = 101;
+			}else{ //peones
+				fil3[col*4] = 102;
+			}
+		}else if (blancos[i] == 4){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil4[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil4[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil4[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil4[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil4[col*4] = 101;
+			}else{ //peones
+				fil4[col*4] = 102;
+			}
+		}else if (blancos[i] == 5){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil5[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil5[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil5[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil5[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil5[col*4] = 101;
+			}else{ //peones
+				fil5[col*4] = 102;
+			}
+		}else if (blancos[i] == 6){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil6[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil6[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil6[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil6[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil6[col*4] = 101;
+			}else{ //peones
+				fil6[col*4] = 102;
+			}
+		}else if (blancos[i] == 7){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil7[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil7[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil7[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil7[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil7[col*4] = 101;
+			}else{ //peones
+				fil7[col*4] = 102;
+			}
+		}else if (blancos[i] == 8){
+			col = blancos[i+1];
+			if (i == 0){ //rey
+				fil8[col*4] = 97;
+			}else if (i == 2){ //reina
+				fil8[col*4] = 98;
+			}else if (i == 4 || i == 6){ // alfil
+				fil8[col*4] = 99;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil8[col*4] = 100;
+			}else if (i == 12 || i == 14){ //torre
+				fil8[col*4] = 101;
+			}else{ //peones
+				fil8[col*4] = 102;
+			}
+		}
+	}
+
+	for(int i = 0; i < 32; i = i + 2){
+		if (negros[i] == 1){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil1[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil1[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil1[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil1[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil1[col*4] = 69;
+			}else{ //peones
+				fil1[col*4] = 70;
+			}
+		}else if (negros[i] == 2){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil2[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil2[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil2[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil2[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil2[col*4] = 69;
+			}else{ //peones
+				fil2[col*4] = 70;
+			}
+		}else if (negros[i] == 3){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil3[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil3[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil3[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil3[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil3[col*4] = 69;
+			}else{ //peones
+				fil3[col*4] = 70;
+			}
+		}else if (negros[i] == 4){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil4[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil4[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil4[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil4[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil4[col*4] = 69;
+			}else{ //peones
+				fil4[col*4] = 70;
+			}
+		}else if (negros[i] == 5){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil5[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil5[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil5[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil5[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil5[col*4] = 69;
+			}else{ //peones
+				fil5[col*4] = 70;
+			}
+		}else if (negros[i] == 6){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil6[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil6[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil6[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil6[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil6[col*4] = 69;
+			}else{ //peones
+				fil6[col*4] = 70;
+			}
+		}else if (negros[i] == 7){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil7[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil7[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil7[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil7[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil7[col*4] = 69;
+			}else{ //peones
+				fil7[col*4] = 70;
+			}
+		}else if (negros[i] == 8){
+			col = negros[i+1];
+			if (i == 0){ //rey
+				fil8[col*4] = 65;
+			}else if (i == 2){ //reina
+				fil8[col*4] = 66;
+			}else if (i == 4 || i == 6){ // alfil
+				fil8[col*4] = 67;				
+			}else if (i == 8 || i == 10){ // caballo
+				fil8[col*4] = 68;
+			}else if (i == 12 || i == 14){ //torre
+				fil8[col*4] = 69;
+			}else{ //peones
+				fil8[col*4] = 70;
+			}
+		}
+
+	}
+	printf("%s", fil0);
+	for (int i = 0; i < 73; i++){
+		if (64 < fil1[i] && fil1[i] < 123){
+			if (fil1[i] == 65){
+				printf("♚");
+			}else if (fil1[i] == 66){
+				printf("♛");
+			}else if (fil1[i] == 67){
+				printf("♝");
+			}else if (fil1[i] == 68){
+				printf("♞");
+			}else if (fil1[i] == 69){
+				printf("♜");
+			}else if (fil1[i] == 70){
+				printf("♟");
+			}else if (fil1[i] == 97){
+				printf("♔");
+			}else if (fil1[i] == 98){
+				printf("♕");
+			}else if (fil1[i] == 99){
+				printf("♗");
+			}else if (fil1[i] == 100){
+				printf("♘");
+			}else if (fil1[i] == 101){
+				printf("♖");
+			}else if (fil1[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil1[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil2[i]) && (fil2[i] < 123)){
+			if (fil2[i] == 65){
+				printf("♚");
+			}else if (fil2[i] == 66){
+				printf("♛");
+			}else if (fil2[i] == 67){
+				printf("♝");
+			}else if (fil2[i] == 68){
+				printf("♞");
+			}else if (fil2[i] == 69){
+				printf("♜");
+			}else if (fil2[i] == 70){
+				printf("♟");
+			}else if (fil2[i] == 97){
+				printf("♔");
+			}else if (fil2[i] == 98){
+				printf("♕");
+			}else if (fil2[i] == 99){
+				printf("♗");
+			}else if (fil2[i] == 100){
+				printf("♘");
+			}else if (fil2[i] == 101){
+				printf("♖");
+			}else if (fil2[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil2[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil3[i]) && (fil3[i] < 123)){
+			if (fil3[i] == 65){
+				printf("♚");
+			}else if (fil3[i] == 66){
+				printf("♛");
+			}else if (fil3[i] == 67){
+				printf("♝");
+			}else if (fil3[i] == 68){
+				printf("♞");
+			}else if (fil3[i] == 69){
+				printf("♜");
+			}else if (fil3[i] == 70){
+				printf("♟");
+			}else if (fil3[i] == 97){
+				printf("♔");
+			}else if (fil3[i] == 98){
+				printf("♕");
+			}else if (fil3[i] == 99){
+				printf("♗");
+			}else if (fil3[i] == 100){
+				printf("♘");
+			}else if (fil3[i] == 101){
+				printf("♖");
+			}else if (fil3[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil3[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil4[i]) && (fil4[i] < 123)){
+			if (fil4[i] == 65){
+				printf("♚");
+			}else if (fil4[i] == 66){
+				printf("♛");
+			}else if (fil4[i] == 67){
+				printf("♝");
+			}else if (fil4[i] == 68){
+				printf("♞");
+			}else if (fil4[i] == 69){
+				printf("♜");
+			}else if (fil4[i] == 70){
+				printf("♟");
+			}else if (fil4[i] == 97){
+				printf("♔");
+			}else if (fil4[i] == 98){
+				printf("♕");
+			}else if (fil4[i] == 99){
+				printf("♗");
+			}else if (fil4[i] == 100){
+				printf("♘");
+			}else if (fil4[i] == 101){
+				printf("♖");
+			}else if (fil4[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil4[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil5[i]) && (fil5[i] < 123)){
+			if (fil5[i] == 65){
+				printf("♚");
+			}else if (fil5[i] == 66){
+				printf("♛");
+			}else if (fil5[i] == 67){
+				printf("♝");
+			}else if (fil5[i] == 68){
+				printf("♞");
+			}else if (fil5[i] == 69){
+				printf("♜");
+			}else if (fil5[i] == 70){
+				printf("♟");
+			}else if (fil5[i] == 97){
+				printf("♔");
+			}else if (fil5[i] == 98){
+				printf("♕");
+			}else if (fil5[i] == 99){
+				printf("♗");
+			}else if (fil5[i] == 100){
+				printf("♘");
+			}else if (fil5[i] == 101){
+				printf("♖");
+			}else if (fil5[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil5[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil6[i]) && (fil6[i] < 123)){
+			if (fil6[i] == 65){
+				printf("♚");
+			}else if (fil6[i] == 66){
+				printf("♛");
+			}else if (fil6[i] == 67){
+				printf("♝");
+			}else if (fil6[i] == 68){
+				printf("♞");
+			}else if (fil6[i] == 69){
+				printf("♜");
+			}else if (fil6[i] == 70){
+				printf("♟");
+			}else if (fil6[i] == 97){
+				printf("♔");
+			}else if (fil6[i] == 98){
+				printf("♕");
+			}else if (fil6[i] == 99){
+				printf("♗");
+			}else if (fil6[i] == 100){
+				printf("♘");
+			}else if (fil6[i] == 101){
+				printf("♖");
+			}else if (fil6[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil6[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil7[i]) && (fil7[i] < 123)){
+			if (fil7[i] == 65){
+				printf("♚");
+			}else if (fil7[i] == 66){
+				printf("♛");
+			}else if (fil7[i] == 67){
+				printf("♝");
+			}else if (fil7[i] == 68){
+				printf("♞");
+			}else if (fil7[i] == 69){
+				printf("♜");
+			}else if (fil7[i] == 70){
+				printf("♟");
+			}else if (fil7[i] == 97){
+				printf("♔");
+			}else if (fil7[i] == 98){
+				printf("♕");
+			}else if (fil7[i] == 99){
+				printf("♗");
+			}else if (fil7[i] == 100){
+				printf("♘");
+			}else if (fil7[i] == 101){
+				printf("♖");
+			}else if (fil7[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil7[i]);
+		}
+	}
+	for (int i = 0; i < 73; i++){
+		if ((64 < fil8[i]) && (fil8[i] < 123)){
+			if (fil8[i] == 65){
+				printf("♚");
+			}else if (fil8[i] == 66){
+				printf("♛");
+			}else if (fil8[i] == 67){
+				printf("♝");
+			}else if (fil8[i] == 68){
+				printf("♞");
+			}else if (fil8[i] == 69){
+				printf("♜");
+			}else if (fil8[i] == 70){
+				printf("♟");
+			}else if (fil8[i] == 97){
+				printf("♔");
+			}else if (fil8[i] == 98){
+				printf("♕");
+			}else if (fil8[i] == 99){
+				printf("♗");
+			}else if (fil8[i] == 100){
+				printf("♘");
+			}else if (fil8[i] == 101){
+				printf("♖");
+			}else if (fil8[i] == 102){
+				printf("♙");}
+		}else{
+			printf("%c", fil8[i]);
+		}
+	}
+}
+
 char* recieveMessage(int socket, char* message){
   printf("♔ ... \n");
   recv(socket, message, 1024, 0);
@@ -76,10 +585,10 @@ void sendMove(int client_socket, char filao, char colo, char fild, char cold, ch
 	int fid = 8;
 	mensaje[0] = fid;
 	mensaje[1] = 5;
-	mensaje[2] = colo;
-	mensaje[3] = filao;
-	mensaje[4] = cold;
-	mensaje[5] = fild;
+	mensaje[2] = filao;
+	mensaje[3] = colo;
+	mensaje[4] = fild;
+	mensaje[5] = cold;
 	mensaje[6] = pieza;
 	sendMessage(client_socket, mensaje);
 }
@@ -97,7 +606,6 @@ void matchMakingList(int clientSocket) {
 		cant_clientes_str[i] = message_answer[i];
 	}
 	int cant_clientes = atoi(cant_clientes_str);
-
 	printf("Players:\n");
 	int avance = 4;
 	for (int i = 0; i < cant_clientes; ++i)
@@ -115,7 +623,6 @@ void matchMakingList(int clientSocket) {
 		printf("ID: %i - Nickname: %s\n", id, nickname_cliente);
 		avance += 3 + byte_nickname;
 	}
-
 }
 
 int initializeClient(char* ip, int port){
@@ -172,13 +679,326 @@ int initializeClient(char* ip, int port){
 	return clientSocket;
 }
 
+void initBoard(char *blancos, char *negros){
+	negros[0] = 1;
+	negros[1] = 4;
+	negros[2] = 1;
+	negros[3] = 5;
+	negros[4] = 1;
+	negros[5] = 3;
+	negros[6] = 1;
+	negros[7] = 6;
+	negros[8] = 1;
+	negros[9] = 2;
+	negros[10] = 1;
+	negros[11] = 7;
+	negros[12] = 1;
+	negros[13] = 1;
+	negros[14] = 1;
+	negros[15] = 8;
+	negros[16] = 2;
+	negros[17] = 1;
+	negros[18] = 2;
+	negros[19] = 2;
+	negros[20] = 2;
+	negros[21] = 3;
+	negros[22] = 2;
+	negros[23] = 4;
+	negros[24] = 2;
+	negros[25] = 5;
+	negros[26] = 2;
+	negros[27] = 6;
+	negros[28] = 2;
+	negros[29] = 7;
+	negros[30] = 2;
+	negros[31] = 8;
+
+	blancos[0] = 8;
+	blancos[1] = 4;
+	blancos[2] = 8;
+	blancos[3] = 5;
+	blancos[4] = 8;
+	blancos[5] = 3;
+	blancos[6] = 8;
+	blancos[7] = 6;
+	blancos[8] = 8;
+	blancos[9] = 2;
+	blancos[10] = 8;
+	blancos[11] = 7;
+	blancos[12] = 8;
+	blancos[13] = 1;
+	blancos[14] = 8;
+	blancos[15] = 8;
+	blancos[16] = 7;
+	blancos[17] = 1;
+	blancos[18] = 7;
+	blancos[19] = 2;
+	blancos[20] = 7;
+	blancos[21] = 3;
+	blancos[22] = 7;
+	blancos[23] = 4;
+	blancos[24] = 7;
+	blancos[25] = 5;
+	blancos[26] = 7;
+	blancos[27] = 6;
+	blancos[28] = 7;
+	blancos[29] = 7;
+	blancos[30] = 7;
+	blancos[31] = 8;
+}
+int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, char fild, char cold, char p){
+	//printf("%c %c %c %c %c\n", filo, colo, fild, cold, p);
+	//printf("%i %i %i %i %c\n", filo - 48, colo - 96, fild - 48, cold - 96, p);
+	for(int i = 0; i < 32; i = i + 2){ // reviso que no exista nadie en el destino, hay que cambiarlo para ver si se come a alguien
+		if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+			return 1;
+		if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+			return 1;
+	}
+	if (color == 0){ // reviso que escogio una pieza existente
+		if (p == "R"[0]){ //rey
+			if (blancos[0] == filo - 48 && blancos[1] == colo - 96){
+				blancos[0] = fild - 48;
+				blancos[1] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+
+		}else if (p == "r"[0]){ //reina
+			if (blancos[2] == filo - 48 && blancos[3] == colo - 96){
+				blancos[2] = fild - 48;
+				blancos[3] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "a"[0]){
+			if (blancos[4] == filo - 48 && blancos[5] == colo - 96){
+				blancos[4] = fild - 48;
+				blancos[5] = cold - 96;
+				return 0;
+			}
+			else if (blancos[6] == filo - 48 && blancos[7] == colo - 96){
+				blancos[6] = fild - 48;
+				blancos[7] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "c"[0]){
+			if (blancos[8] == filo - 48 && blancos[9] == colo - 96){
+				blancos[8] = fild - 48;
+				blancos[9] = cold - 96;
+				return 0;
+			}
+			else if (blancos[10] == filo - 48 && blancos[11] == colo - 96){
+				blancos[10] = fild - 48;
+				blancos[11] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "t"[0]){
+			if (blancos[12] == filo - 48 && blancos[13] == colo - 96){
+				blancos[12] = fild - 48;
+				blancos[13] = cold - 96;
+				return 0;
+			}
+			else if (blancos[14] == filo - 48 && blancos[15] == colo - 96){
+				blancos[14] = fild - 48;
+				blancos[15] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "p"[0]){
+			if (blancos[16] == filo - 48 && blancos[17] == colo - 96){
+				blancos[16] = fild - 48;
+				blancos[17] = cold - 96;
+				return 0;
+			}
+			else if (blancos[18] == filo - 48 && blancos[19] == colo - 96){
+				blancos[18] = fild - 48;
+				blancos[19] = cold - 96;
+				return 0;
+			}
+			else if (blancos[20] == filo - 48 && blancos[21] == colo - 96){
+				blancos[20] = fild - 48;
+				blancos[21] = cold - 96;
+				return 0;
+			}
+			else if (blancos[22] == filo - 48 && blancos[23] == colo - 96){
+				blancos[22] = fild - 48;
+				blancos[23] = cold - 96;
+				return 0;
+			}
+			else if (blancos[24] == filo - 48 && blancos[25] == colo - 96){
+				blancos[24] = fild - 48;
+				blancos[25] = cold - 96;
+				return 0;
+			}
+			else if (blancos[26] == filo - 48 && blancos[27] == colo - 96){
+				blancos[26] = fild - 48;
+				blancos[27] = cold - 96;
+				return 0;
+			}
+			else if (blancos[28] == filo - 48 && blancos[29] == colo - 96){
+				blancos[28] = fild - 48;
+				blancos[29] = cold - 96;
+				return 0;
+			}
+			else if (blancos[30] == filo - 48 && blancos[31] == colo - 96){
+				blancos[30] = fild - 48;
+				blancos[31] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else{
+			return 1;
+		}
+	}
+	else if (color == 1){//negros
+		if (p == "R"[0]){ //rey
+			if (negros[0] == filo - 48 && negros[1] == colo - 96){
+				negros[0] = fild - 48;
+				negros[1] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+
+		}else if (p == "r"[0]){ //reina
+			if (negros[2] == filo - 48 && negros[3] == colo - 96){
+				negros[2] = fild - 48;
+				negros[3] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "a"[0]){
+			if (negros[4] == filo - 48 && negros[5] == colo - 96){
+				negros[4] = fild - 48;
+				negros[5] = cold - 96;
+				return 0;
+			}
+			else if (negros[6] == filo - 48 && negros[7] == colo - 96){
+				negros[6] = fild - 48;
+				negros[7] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "c"[0]){
+			if (negros[8] == filo - 48 && negros[9] == colo - 96){
+				negros[8] = fild - 48;
+				negros[9] = cold - 96;
+				return 0;
+			}
+			else if (negros[10] == filo - 48 && negros[11] == colo - 96){
+				negros[10] = fild - 48;
+				negros[11] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "t"[0]){
+			if (negros[12] == filo - 48 && negros[13] == colo - 96){
+				negros[12] = fild - 48;
+				negros[13] = cold - 96;
+				return 0;
+			}
+			else if (negros[14] == filo - 48 && negros[15] == colo - 96){
+				negros[14] = fild - 48;
+				negros[15] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else if (p == "p"[0]){
+			if (negros[16] == filo - 48 && negros[17] == colo - 96){
+				negros[16] = fild - 48;
+				negros[17] = cold - 96;
+				return 0;
+			}
+			else if (negros[18] == filo - 48 && negros[19] == colo - 96){
+				negros[18] = fild - 48;
+				negros[19] = cold - 96;
+				return 0;
+			}
+			else if (negros[20] == filo - 48 && negros[21] == colo - 96){
+				negros[20] = fild - 48;
+				negros[21] = cold - 96;
+				return 0;
+			}
+			else if (negros[22] == filo - 48 && negros[23] == colo - 96){
+				negros[22] = fild - 48;
+				negros[23] = cold - 96;
+				return 0;
+			}
+			else if (negros[24] == filo - 48 && negros[25] == colo - 96){
+				negros[24] = fild - 48;
+				negros[25] = cold - 96;
+				return 0;
+			}
+			else if (negros[26] == filo - 48 && negros[27] == colo - 96){
+				negros[26] = fild - 48;
+				negros[27] = cold - 96;
+				return 0;
+			}
+			else if (negros[28] == filo - 48 && negros[29] == colo - 96){
+				negros[28] = fild - 48;
+				negros[29] = cold - 96;
+				return 0;
+			}
+			else if (negros[30] == filo - 48 && negros[31] == colo - 96){
+				negros[30] = fild - 48;
+				negros[31] = cold - 96;
+				return 0;
+			}
+			else{
+				return 1;
+			}
+			
+		}else{
+			return 1;
+		}
+
+	}else{
+		return 1;
+	}
+}
 
 int main(int argc, char const *argv[])
 {
+	char negros[32];
+	char blancos[32];
+	
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    printf("/i:id -> Invite Player ID, /a -> Available Players, /w Wait Invitation /q Quit\n");
+    printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /q -> Quit\n");
     char message[1024];
     while (1) {
 
@@ -251,11 +1071,15 @@ int main(int argc, char const *argv[])
 					if (msg[6] == 1){
 						color = 1; //negro
 						printf("soy negro\n");
+						initBoard(blancos, negros);
 					}
 					else if (msg[6] == 0){
 						color = 0; //blanco
 						printf("soy blanco\n");
+						initBoard(blancos, negros);
 						char mov[10];
+						printtablero(blancos, negros);
+						MOVIN:
 						printf("Cual es tu primer movimiento (/q Quit Game)\n");
 						scanf("%s",mov);
 						if (strcmp( mov, "/q" ) == 0) {
@@ -268,13 +1092,28 @@ int main(int argc, char const *argv[])
 							exit(0);
 						} 
 						else {
+							int repito = 0;
+							repito = cambiarpieza(blancos, negros, color, mov[0], mov[1], mov[2], mov[3], mov[4]);
+							if (repito == 1){
+								printf("movimiento invalido\n");
+								goto MOVIN;
+							}
+							printtablero(blancos, negros);
 							sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
 						}
 						
 					}
 				}
 				else if (fid == 8){
+					if (color == 0){
+						cambiarpieza(blancos, negros, 1, msg[2], msg[3], msg[4], msg[5], msg[6]);
+					}else{
+						cambiarpieza(blancos, negros, 0, msg[2], msg[3], msg[4], msg[5], msg[6]);
+					}
+					//usleep(200);
+					printtablero(blancos, negros);
 					printf(" el mov del otro jugador es: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
+					MOV:
 					printf("cual va a ser tu movimiento (/q Quit Game)\n");
 					char mov[10];
 					scanf("%s",mov);
@@ -288,6 +1127,13 @@ int main(int argc, char const *argv[])
 						exit(0);
 					}
 					else {
+						int repito = 0;
+						repito = cambiarpieza(blancos, negros, color, mov[0], mov[1], mov[2], mov[3], mov[4]);
+						if (repito == 1){
+							printf("movimiento invalido\n");
+							goto MOV;
+						}
+						printtablero(blancos, negros);
 						sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
 					}
 				}

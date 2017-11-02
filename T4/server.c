@@ -61,7 +61,7 @@ void agregarCliente(char id[2], int socket, char nickname[20]){
 	strcpy(nuevoCliente -> nickname, nickname);
 	nuevoCliente -> id_contrincante[0] = 0;
 	nuevoCliente -> id_contrincante[1] = 0;
-	nuevoCliente -> status = 1;
+	nuevoCliente -> status = 0;
 
 	if (primero == NULL) {
 
@@ -127,14 +127,13 @@ int buscarSocketPorID( char id[2] ) {
 	return 0;
 }
 
-void cambiarEstadoPorID( char id[2], int status ) {
+void cambiarEstadoPorID( char id[2], int stat ) {
 	struct Cliente *i = primero;
 
 	while(i != NULL) {
 		if ( strcmp(i -> id, id) == 0 ){
-			i -> status = status;
+			i -> status = stat;
 		}
-
 		i = i -> sgte;
 	}
 }
@@ -237,7 +236,6 @@ void *listenClient(void *socket_void){
 			returnMessage[3] = id[1];
 			send(socket, returnMessage, 1024,0);
 			
-
 			int k = atoi("8933"); // para leer el id
 			char c1 = k/100;
 			char c2 = k-(k/100)*100;
@@ -274,27 +272,23 @@ void *listenClient(void *socket_void){
 			int avance = 4;
 			struct Cliente *j = primero;
 			while (j != NULL) {
-				if (j -> status == 1) {
-					
+				if (j -> status == 1) {					
 					returnMessage[avance] = j -> id[0];
 					returnMessage[avance+1] = j -> id[1];
-					char byte_nickname_ch = strlen(j -> nickname) + 1;
+					char byte_nickname_ch = strlen(j -> nickname);// +1
 					returnMessage[avance+2] = byte_nickname_ch;
 					for (int n = avance + 3; n < avance + 3 + strlen(j -> nickname); ++n)
 					{
 						returnMessage[n] = j -> nickname[n - (avance + 3)];
 					}
 					returnMessage[avance + 3 + strlen(j -> nickname)] = '\0';
-
+					avance += 3 + strlen(j -> nickname) + 1;
 				}
-				avance += 3 + strlen(j -> nickname) + 1;
 				j = j -> sgte;
 			}
 			printf("RET %s\n", returnMessage);
 			send(socket, returnMessage, 1024, 0);
 
-
-			
 		}
 		else if ( fid == 4 ) {
 			char id_receptor[2];
@@ -313,7 +307,6 @@ void *listenClient(void *socket_void){
 				message[i+4] = nickname[i];
 			}
 			send(socket_receptor, message, 1024, 0);
-
 		}
 		else if ( fid == 5 ) {
 			char id_receptor[2];
@@ -394,8 +387,6 @@ void *listenClient(void *socket_void){
 			cambiarEstadoPorSocket(socket_contrincante, 0);
 			eliminarCliente( id );
 			pthread_exit(NULL);
-
-
 			
 		}
 		else if ( fid == 10 ) {
@@ -420,6 +411,7 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 17 ) {
+			printf("el id a cambiar es: %s\n", id);
 			cambiarEstadoPorID(id, 1);
 		}
 	}
