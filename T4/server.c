@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8081
+#define PORT 8080
 
 int X = 1;
 int Y = 0;
@@ -268,10 +268,10 @@ void *listenClient(void *socket_void){
 			returnMessage[3] = id[1];
 			send(socket, returnMessage, 1024,0);
 			
-			int k = atoi("8933"); // para leer el id
-			char c1 = k/100;
-			char c2 = k-(k/100)*100;
-			printf("%c - %c\n", c1, c2);
+			//int k = atoi("8933"); // para leer el id
+			//char c1 = k/100;
+			//char c2 = k-(k/100)*100;
+			//printf("%c - %c\n", c1, c2);
 
 			agregarCliente(id, socket, nickname);
 

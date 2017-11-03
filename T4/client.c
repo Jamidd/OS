@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include "math.h"
 #define IP "0.0.0.0"
-#define PORT 8081
+#define PORT 8080
 
 char id_destino[2];
 
@@ -755,9 +755,9 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 				return 1;
 		}
 		if (p == "R"[0]){ //rey
-			if (abs(filo-fild) != 1 || abs(colo-cold) != 1) {
-					return 1;
-				}
+			if ( (abs(fild - filo) != 1 ||  cold != colo) && (abs(cold - colo) != 1 && fild != filo) && (abs(fild - filo) != abs(cold - colo) || abs(fild - filo) != 1) ){
+				return 1;
+			}
 			if (blancos[0] == filo - 48 && blancos[1] == colo - 96){
 				blancos[0] = fild - 48;
 				blancos[1] = cold - 96;
@@ -774,7 +774,7 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 
 		}else if (p == "r"[0]){ //reina
-			if (abs(fild - filo) != abs(cold - colo) && (cold != colo && fild != filo)) {
+			if ((abs(fild - filo) != abs(cold - colo)) && (cold != colo && fild != filo)) {
 				return 1;
 			}
 			if ( abs(fild - filo) == abs(cold - colo) ) {
@@ -785,11 +785,11 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
-									
+									printf("A\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
-									
+									printf("B\n");
 									return 1;
 								}
 							}
@@ -799,9 +799,11 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									printf("AA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									printf("BB\n");
 									return 1;
 								}
 							}
@@ -814,9 +816,11 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									printf("AAA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									printf("BBB\n");
 									return 1;
 								}
 							}
@@ -826,9 +830,11 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									printf("AAAA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									printf("BBBB\n");
 									return 1;
 								}
 							}
@@ -1082,6 +1088,12 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
+			for(int i = 0; i < 32; i = i + 2){
+				if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+					return 1;
+				if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+					return 1;
+			}
 			if ( abs(cold - colo) == 1 && fild == filo - 1 ) {
 				int come = 0;
 				for(int i = 0; i < 32; i = i + 2){
@@ -1170,7 +1182,7 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 				return 1;
 		}
 		if (p == "R"[0]){ //rey
-			if (abs(filo-fild) != 1 || abs(colo-cold) != 1) {
+			if ( (abs(fild - filo) != 1 ||  cold != colo) && (abs(cold - colo) != 1 && fild != filo) && (abs(fild - filo) != abs(cold - colo) || abs(fild - filo) != 1) ){
 				return 1;
 			}
 			if (negros[0] == filo - 48 && negros[1] == colo - 96){
@@ -1487,6 +1499,12 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
+			for(int i = 0; i < 32; i = i + 2){
+				if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+					return 1;
+				if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+					return 1;
+			}
 			if ( abs(cold - colo) == 1 && fild == filo + 1 ) {
 				int come = 0;
 				for(int i = 0; i < 32; i = i + 2){
@@ -1587,7 +1605,6 @@ int main(int argc, char const *argv[])
     while (1) {
 
     	INICIO:
-		printf("\nYour Message: ");
 		scanf("%s", message);
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
@@ -1740,6 +1757,7 @@ int main(int argc, char const *argv[])
 						message[1] = 1;
 						message[2] = 0;
 						sendMessage(socket, message);
+						printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 						goto INICIO;
 					}
 					MOV:
@@ -1765,6 +1783,21 @@ int main(int argc, char const *argv[])
 						}
 						printtablero(blancos, negros);
 						sendMove(socket, mov[0], mov[1], mov[2], mov[3], mov[4]);
+						if ((blancos[0] == 0 - 48 && blancos[1] == 0 - 96) || (negros[0] == 0 - 48 && negros[1] == 0 - 96)) {
+							if ((color == 0 && negros[0] == 0 - 48 && negros[1] == 0 - 96) || (color == 1 && blancos[0] == 0 - 48 && blancos[1] == 0 - 96)){
+								printf("You won!\n");
+							} else {
+								printf("You Loose...\n");
+							}
+							int fid = 19;
+							char message[3];
+							message[0] = fid;
+							message[1] = 1;
+							message[2] = 0;
+							sendMessage(socket, message);
+							printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+							goto INICIO;
+						}
 					}
 				}
 				else if (fid == 10){
@@ -1777,6 +1810,7 @@ int main(int argc, char const *argv[])
 					sendMessage(socket, message);
 					char response[3];
 					recv(socket, response, 1024, 0);
+					printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 					goto INICIO;
 				}
 
