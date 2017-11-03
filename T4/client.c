@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include "math.h"
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8081
 
 char id_destino[2];
 
@@ -749,17 +749,24 @@ void initBoard(char *blancos, char *negros){
 int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, char fild, char cold, char p){
 	//printf("%c %c %c %c %c\n", filo, colo, fild, cold, p);
 	//printf("%i %i %i %i %c\n", filo - 48, colo - 96, fild - 48, cold - 96, p);
-	for(int i = 0; i < 32; i = i + 2){ // reviso que no exista nadie en el destino, hay que cambiarlo para ver si se come a alguien
-		if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
-			return 1;
-		if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
-			return 1;
-	}
 	if (color == 0){ // reviso que escogio una pieza existente
+		for(int i = 0; i < 32; i = i + 2){ // reviso que no exista nadie en el destino, hay que cambiarlo para ver si se come a alguien
+			if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+				return 1;
+		}
 		if (p == "R"[0]){ //rey
+			if (abs(filo-fild) != 1 || abs(colo-cold) != 1) {
+					return 1;
+				}
 			if (blancos[0] == filo - 48 && blancos[1] == colo - 96){
 				blancos[0] = fild - 48;
 				blancos[1] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -767,24 +774,201 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 
 		}else if (p == "r"[0]){ //reina
+			if (abs(fild - filo) != abs(cold - colo) && (cold != colo && fild != filo)) {
+				return 1;
+			}
+			if ( abs(fild - filo) == abs(cold - colo) ) {
+				if ( fild < filo ) {
+
+					if ( cold < colo ) { // hacia arriba - izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									
+									return 1;
+								}
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									
+									return 1;
+								}
+							}
+						}
+					} else { // hacia arriba - derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									return 1;
+								}
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									return 1;
+								}
+							}
+						}
+					}
+
+				} else {
+					if ( cold < colo ) { // hacia abajo - izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									return 1;
+								}
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									return 1;
+								}
+							}
+						}
+					} else { // hacia abajo - derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
+									return 1;
+								}
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
+									return 1;
+								}
+							}
+						}
+					}
+				}
+			} else if (cold == colo || fild == filo) {
+				if ( cold == colo ){
+					if ( fild < filo ) { // hacia arriba
+						for (int k = 1; k < abs(fild - filo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96)
+									return 1;
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96)
+									return 1;
+							}
+						}	
+					} else { // hacia abajo
+						for (int k = 1; k < abs(fild - filo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96)
+									return 1;
+								if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96)
+									return 1;
+							}
+						}
+					}
+				} else if (fild == filo){
+					if ( cold < colo ) { // hacia izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 + k)
+									return 1;
+								if (negros[i] == fild - 48 && negros[i+1] == cold - 96 + k)
+									return 1;
+							}
+						}
+					} else { // hacia derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 - k)
+									return 1;
+								if (negros[i] == fild - 48 && negros[i+1] == cold - 96 - k)
+									return 1;
+							}
+						}
+					}
+				}
+			}
 			if (blancos[2] == filo - 48 && blancos[3] == colo - 96){
 				blancos[2] = fild - 48;
 				blancos[3] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
 				return 1;
 			}
 			
-		}else if (p == "a"[0]){
+		} else if (p == "a"[0]){
+			if ( abs(fild - filo) != abs(cold - colo) ) {
+				return 1;
+			}
+			// revisar tope
+			if ( fild < filo ) {
+
+				if ( cold < colo ) { // hacia arriba - izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia arriba - derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+
+			} else {
+				if ( cold < colo ) { // hacia abajo - izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia abajo - derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+			}
 			if (blancos[4] == filo - 48 && blancos[5] == colo - 96){
 				blancos[4] = fild - 48;
 				blancos[5] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (blancos[6] == filo - 48 && blancos[7] == colo - 96){
 				blancos[6] = fild - 48;
 				blancos[7] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -792,14 +976,29 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "c"[0]){
+			if ( (abs(fild - filo) != 2 || abs(cold - colo) != 1 ) && (abs(fild - filo) != 1 || abs(cold - colo) != 2 ) ) {
+				return 1;
+			}
 			if (blancos[8] == filo - 48 && blancos[9] == colo - 96){
 				blancos[8] = fild - 48;
 				blancos[9] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (blancos[10] == filo - 48 && blancos[11] == colo - 96){
 				blancos[10] = fild - 48;
 				blancos[11] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -807,14 +1006,75 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "t"[0]){
+			if (cold != colo && fild != filo) {
+				return 1;
+			}
+			// revisar tope
+			if ( cold == colo ){
+				if ( fild < filo ) { // hacia arriba
+					for (int k = 1; k < abs(fild - filo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}	
+				} else { // hacia abajo
+					for (int k = 1; k < abs(fild - filo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}
+				}
+			} else if (fild == filo){
+				if ( cold < colo ) { // hacia izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+			}
 			if (blancos[12] == filo - 48 && blancos[13] == colo - 96){
 				blancos[12] = fild - 48;
 				blancos[13] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (blancos[14] == filo - 48 && blancos[15] == colo - 96){
 				blancos[14] = fild - 48;
 				blancos[15] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -822,6 +1082,40 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
+			if ( abs(cold - colo) == 1 && fild == filo - 1 ) {
+				int come = 0;
+				for(int i = 0; i < 32; i = i + 2){
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96){
+						come++;
+						negros[i] = 0 - 48;
+						negros[i+1] = 0 - 96;
+					}
+				}
+				if ( come == 0 ) {
+					return 1;
+				}
+			} else {
+				if( cold != colo ) {
+					return 1;
+				}
+				if (filo == 55) {
+					if (fild != filo - 1 && fild != filo - 2) {
+						return 1;
+					}
+					if ( fild == filo - 2 ) {
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild + 1 - 48 && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild + 1 - 48 && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}
+				} else {
+					if (fild != filo - 1) {
+						return 1;
+					}
+				}
+			}
 			if (blancos[16] == filo - 48 && blancos[17] == colo - 96){
 				blancos[16] = fild - 48;
 				blancos[17] = cold - 96;
@@ -871,10 +1165,23 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 		}
 	}
 	else if (color == 1){//negros
+		for(int i = 0; i < 32; i = i + 2){
+			if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+				return 1;
+		}
 		if (p == "R"[0]){ //rey
+			if (abs(filo-fild) != 1 || abs(colo-cold) != 1) {
+				return 1;
+			}
 			if (negros[0] == filo - 48 && negros[1] == colo - 96){
 				negros[0] = fild - 48;
 				negros[1] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -882,9 +1189,113 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 
 		}else if (p == "r"[0]){ //reina
+			if (abs(fild - filo) != abs(cold - colo) && (cold != colo && fild != filo)) {
+				return 1;
+			}
+			if ( abs(fild - filo) == abs(cold - colo) ) {
+				if ( fild < filo ) {
+
+					if ( cold < colo ) { // hacia arriba - izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k)
+									return 1;
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k)
+									return 1;
+							}
+						}
+					} else { // hacia arriba - derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 - k)
+									return 1;
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 - k)
+									return 1;
+							}
+						}
+					}
+
+				} else {
+					if ( cold < colo ) { // hacia abajo - izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 + k)
+									return 1;
+								if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 + k)
+									return 1;
+							}
+						}
+					} else { // hacia abajo - derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 - k)
+									return 1;
+								if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 - k)
+									return 1;
+							}
+						}
+					}
+				}
+			} else if (cold == colo || fild == filo) {
+				if ( cold == colo ){
+					if ( fild < filo ) { // hacia arriba
+						for (int k = 1; k < abs(fild - filo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96)
+									return 1;
+								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96)
+									return 1;
+							}
+						}	
+					} else { // hacia abajo
+						for (int k = 1; k < abs(fild - filo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96)
+									return 1;
+								if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96)
+									return 1;
+							}
+						}
+					}
+				} else if (fild == filo){
+					if ( cold < colo ) { // hacia izquierda
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 + k)
+									return 1;
+								if (negros[i] == fild - 48 && negros[i+1] == cold - 96 + k)
+									return 1;
+							}
+						}
+					} else { // hacia derecha
+						for (int k = 1; k < abs(cold - colo); ++k)
+						{
+							for(int i = 0; i < 32; i = i + 2){
+								if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 - k)
+									return 1;
+								if (negros[i] == fild - 48 && negros[i+1] == cold - 96 - k)
+									return 1;
+							}
+						}
+					}
+				}
+			}
 			if (negros[2] == filo - 48 && negros[3] == colo - 96){
 				negros[2] = fild - 48;
 				negros[3] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -892,14 +1303,77 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "a"[0]){
+			if ( abs(fild - filo) != abs(cold - colo) ) {
+				return 1;
+			}
+			// revisar tope
+			if ( fild < filo ) {
+
+				if ( cold < colo ) { // hacia arriba - izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia arriba - derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+
+			} else {
+				if ( cold < colo ) { // hacia abajo - izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia abajo - derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+			}
 			if (negros[4] == filo - 48 && negros[5] == colo - 96){
 				negros[4] = fild - 48;
 				negros[5] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (negros[6] == filo - 48 && negros[7] == colo - 96){
 				negros[6] = fild - 48;
 				negros[7] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -907,14 +1381,29 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "c"[0]){
+			if ( (abs(fild - filo) != 2 || abs(cold - colo) != 1 ) && (abs(fild - filo) != 1 || abs(cold - colo) != 2 ) ) {
+				return 1;
+			}
 			if (negros[8] == filo - 48 && negros[9] == colo - 96){
 				negros[8] = fild - 48;
 				negros[9] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (negros[10] == filo - 48 && negros[11] == colo - 96){
 				negros[10] = fild - 48;
 				negros[11] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -922,14 +1411,75 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "t"[0]){
+			if (cold != colo && fild != filo) {
+				return 1;
+			}
+			// revisar tope
+			if ( cold == colo ){
+				if ( fild < filo ) { // hacia arriba
+					for (int k = 1; k < abs(fild - filo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}	
+				} else { // hacia abajo
+					for (int k = 1; k < abs(fild - filo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 - k && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild - 48 - k && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}
+				}
+			} else if (fild == filo){
+				if ( cold < colo ) { // hacia izquierda
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 + k)
+								return 1;
+							if (negros[i] == fild - 48 && negros[i+1] == cold - 96 + k)
+								return 1;
+						}
+					}
+				} else { // hacia derecha
+					for (int k = 1; k < abs(cold - colo); ++k)
+					{
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96 - k)
+								return 1;
+							if (negros[i] == fild - 48 && negros[i+1] == cold - 96 - k)
+								return 1;
+						}
+					}
+				}
+			}
 			if (negros[12] == filo - 48 && negros[13] == colo - 96){
 				negros[12] = fild - 48;
 				negros[13] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else if (negros[14] == filo - 48 && negros[15] == colo - 96){
 				negros[14] = fild - 48;
 				negros[15] = cold - 96;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
 				return 0;
 			}
 			else{
@@ -937,6 +1487,40 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
+			if ( abs(cold - colo) == 1 && fild == filo + 1 ) {
+				int come = 0;
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96){
+						come++;
+						blancos[i] = 0 - 48;
+						blancos[i+1] = 0 - 96;
+					}
+				}
+				if ( come == 0 ) {
+					return 1;
+				}
+			} else {
+				if( cold != colo ) {
+					return 1;
+				}
+				if (filo == 50) {
+					if (fild != filo + 1 && fild != filo + 2) {
+						return 1;
+					}
+					if ( fild == filo + 2 ) {
+						for(int i = 0; i < 32; i = i + 2){
+							if (blancos[i] == fild - 1 - 48 && blancos[i+1] == cold - 96)
+								return 1;
+							if (negros[i] == fild - 1 - 48 && negros[i+1] == cold - 96)
+								return 1;
+						}
+					}
+				} else {
+					if (fild != filo + 1) {
+						return 1;
+					}
+				}
+			}
 			if (negros[16] == filo - 48 && negros[17] == colo - 96){
 				negros[16] = fild - 48;
 				negros[17] = cold - 96;
@@ -998,7 +1582,7 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /q -> Quit\n");
+    printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
 
@@ -1028,6 +1612,32 @@ int main(int argc, char const *argv[])
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
+			}
+			else if (message[1] == 's') {
+				char message[1];
+				message[0] = 14;
+				sendMessage(socket, message);
+				char response[12];
+				recv(socket, response, 1024, 0);
+				int cantiidad_conectados = response[2];
+				int cantiidad_waiting = response[3];
+				int cantiidad_playing = response[4];
+				int X = response[5];
+				int Y = response[6];
+				int Z = response[7];
+				char id_implementacion_str[4];
+				for (int i = 0; i < 4; ++i)
+				{
+					id_implementacion_str[i] = response[8 + i];
+				}
+				int id_implementacion = atoi(id_implementacion_str);
+				printf("Server Info\n");
+				printf("	Players Online: %i\n", cantiidad_conectados);
+				printf("	Players Waiting: %i\n", cantiidad_waiting);
+				printf("	Players Playing: %i\n", cantiidad_playing);
+				printf("	Version: %i.%i.%i\n", X, Y, Z);
+				printf("	ID: %i\n", id_implementacion);
+				goto INICIO;
 			}
 			else if (message[1] == 'q') {
 				int fid = 9;
@@ -1068,19 +1678,23 @@ int main(int argc, char const *argv[])
 					}
 				}
 				else if (fid == 7){
+					char message[1];
+					message[0] = 18;
+					sendMessage(socket, message);
 					if (msg[6] == 1){
 						color = 1; //negro
-						printf("soy negro\n");
+						printf("You are black\n");
 						initBoard(blancos, negros);
+						printtablero(blancos, negros);
 					}
 					else if (msg[6] == 0){
 						color = 0; //blanco
-						printf("soy blanco\n");
+						printf("You are white\n");
 						initBoard(blancos, negros);
 						char mov[10];
 						printtablero(blancos, negros);
 						MOVIN:
-						printf("Cual es tu primer movimiento (/q Quit Game)\n");
+						printf("Enter your first move (/q Quit Game)\n");
 						scanf("%s",mov);
 						if (strcmp( mov, "/q" ) == 0) {
 							int fid = 9;
@@ -1095,7 +1709,8 @@ int main(int argc, char const *argv[])
 							int repito = 0;
 							repito = cambiarpieza(blancos, negros, color, mov[0], mov[1], mov[2], mov[3], mov[4]);
 							if (repito == 1){
-								printf("movimiento invalido\n");
+								printtablero(blancos, negros);
+								printf("Invalid Move!\n");
 								goto MOVIN;
 							}
 							printtablero(blancos, negros);
@@ -1112,9 +1727,23 @@ int main(int argc, char const *argv[])
 					}
 					//usleep(200);
 					printtablero(blancos, negros);
-					printf(" el mov del otro jugador es: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
+					printf("The other player move: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
+					if ((blancos[0] == 0 - 48 && blancos[1] == 0 - 96) || (negros[0] == 0 - 48 && negros[1] == 0 - 96)) {
+						if ((color == 0 && negros[0] == 0 - 48 && negros[1] == 0 - 96) || (color == 1 && blancos[0] == 0 - 48 && blancos[1] == 0 - 96)){
+							printf("You won!\n");
+						} else {
+							printf("You Loose...\n");
+						}
+						int fid = 19;
+						char message[3];
+						message[0] = fid;
+						message[1] = 1;
+						message[2] = 0;
+						sendMessage(socket, message);
+						goto INICIO;
+					}
 					MOV:
-					printf("cual va a ser tu movimiento (/q Quit Game)\n");
+					printf("Enter your move (/q Quit Game)\n");
 					char mov[10];
 					scanf("%s",mov);
 					if (strcmp( mov, "/q" ) == 0) {
@@ -1130,7 +1759,8 @@ int main(int argc, char const *argv[])
 						int repito = 0;
 						repito = cambiarpieza(blancos, negros, color, mov[0], mov[1], mov[2], mov[3], mov[4]);
 						if (repito == 1){
-							printf("movimiento invalido\n");
+							printtablero(blancos, negros);
+								printf("Invalid Move!\n");
 							goto MOV;
 						}
 						printtablero(blancos, negros);
@@ -1138,13 +1768,15 @@ int main(int argc, char const *argv[])
 					}
 				}
 				else if (fid == 10){
-					printf("Se ha salido el otro jugador\n");
+					printf("The other player has left\n");
 					int fid = 10;
 					char message[3];
 					message[0] = fid;
 					message[1] = 1;
 					message[2] = 0;
 					sendMessage(socket, message);
+					char response[3];
+					recv(socket, response, 1024, 0);
 					goto INICIO;
 				}
 

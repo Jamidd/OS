@@ -9,8 +9,12 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8081
 
+int X = 1;
+int Y = 0;
+int Z = 0;
+int ID_IMPLEMENTACION = 200; // ??? 
 
 struct Cliente
 {
@@ -179,6 +183,34 @@ char* buscarNicknamePorSocket( int socket ) {
 	return NULL;
 }
 
+int cantidadClientesConectados() {
+	int cantidad = 0;
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		cantidad++;
+
+		i = i -> sgte;
+	}
+
+	return cantidad;
+}
+
+int cantidadClientesPorStatus( int status ) {
+	int cantidad = 0;
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		if ( i -> status == status ) {
+			cantidad++;
+		}
+
+		i = i -> sgte;
+	}
+
+	return cantidad;
+}
+
 void eliminarContrincantePorSocket( int socket ) {
 	struct Cliente *i = primero;
 	while(i != NULL) {
@@ -275,7 +307,7 @@ void *listenClient(void *socket_void){
 				if (j -> status == 1) {					
 					returnMessage[avance] = j -> id[0];
 					returnMessage[avance+1] = j -> id[1];
-					char byte_nickname_ch = strlen(j -> nickname);// +1
+					char byte_nickname_ch = strlen(j -> nickname) + 1;
 					returnMessage[avance+2] = byte_nickname_ch;
 					for (int n = avance + 3; n < avance + 3 + strlen(j -> nickname); ++n)
 					{
@@ -323,14 +355,6 @@ void *listenClient(void *socket_void){
 			send(socket_receptor, respuesta, 1024, 0);
 
 			if (respuesta[2] == '1'){
-				/*
-				char a[2];
-				sprintf(a, "%i", id[0]*100 + id[1]);
-				printf("%s\n", a);
-				char b[2];
-				sprintf(b, "%i", id_receptor[0]*100 + id_receptor[1]);
-				printf("%s\n", b);
-				*/
 				agregarContrincante(id, id_receptor);
 				cambiarEstadoPorID(id, 2);
 				cambiarEstadoPorID(id_receptor, 2);
@@ -390,6 +414,11 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 10 ) {
+			char message_resp[3];
+			message_resp[0] = fid;
+			message_resp[1] = 1;
+			message_resp[2] = 0;
+			sendMessage(socket, message);
 			
 		}
 		else if ( fid == 11 ) {
@@ -402,7 +431,24 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 14 ) {
-			
+			char message[12];
+			message[0] = fid;
+			message[1] = 10;
+			message[2] = cantidadClientesConectados();
+			message[3] = cantidadClientesPorStatus(1); // status waiting
+			message[4] = cantidadClientesPorStatus(2); // status playing
+			message[5] = X;
+			message[6] = Y;
+			message[7] = Z;
+			char id_str[4];
+			sprintf(id_str, "%d", ID_IMPLEMENTACION);
+			for (int i = 0; i < 4; ++i)
+			{
+				message[i + 8] = id_str[i];
+
+			}
+			sendMessage(socket, message);
+
 		}
 		else if ( fid == 15 ) {
 			
@@ -411,8 +457,16 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 17 ) {
-			printf("el id a cambiar es: %s\n", id);
+			printf("WAITING STATUS -> %s\n", id);
 			cambiarEstadoPorID(id, 1);
+		}
+		else if ( fid == 18 ) {
+			printf("PLAYING STATUS -> %s\n", id);
+			cambiarEstadoPorID(id, 2);
+		}
+		else if ( fid == 19 ) {
+			printf("CONNECTED STATUS -> %s\n", id);
+			cambiarEstadoPorID(id, 0);
 		}
 	}
 	return NULL;
