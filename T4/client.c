@@ -1683,13 +1683,13 @@ int main(int argc, char const *argv[])
 					sendMessage(socket, message);
 					if (msg[6] == 1){
 						color = 1; //negro
-						printf("You are black\n");
+						printf("You are black ♚\n");
 						initBoard(blancos, negros);
 						printtablero(blancos, negros);
 					}
 					else if (msg[6] == 0){
 						color = 0; //blanco
-						printf("You are white\n");
+						printf("You are white ♔\n");
 						initBoard(blancos, negros);
 						char mov[10];
 						printtablero(blancos, negros);
