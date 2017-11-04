@@ -7,12 +7,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "math.h"
+#include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8081
 
 char id_destino[2];
 
 char id[2];
+char nickname[20];
 
 int color;
 
@@ -552,11 +554,14 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 	sendMessage(clientSocket, ask_f4);
 	char* message_answer = malloc( 1024 );
 	message_answer = recieveMessage(clientSocket, message_answer);
+	if (message_answer[1] == 0) {
+		printf("This player is not waiting\n");
+		return 2;
+	}
 	printf("The answer is: |%c|\n", message_answer[2]);
 	if (message_answer[2] == '1'){
 		id_destino[0] = id[0];
 		id_destino[1] = id[1];
-		printf("!!\n");
 		return 1;
 	}
 	return 0;
@@ -649,7 +654,6 @@ int initializeClient(char* ip, int port){
 	addr_size = sizeof serverAddr;
 	connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
 	printf("Connected to server!\n");
-	char nickname[20];
 	printf("\nYour Nickname: ");
 	scanf("%s", nickname);
 	printf("\n");
@@ -785,11 +789,9 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
-									printf("A\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
-									printf("B\n");
 									return 1;
 								}
 							}
@@ -799,11 +801,9 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
-									printf("AA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
-									printf("BB\n");
 									return 1;
 								}
 							}
@@ -816,11 +816,9 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
-									printf("AAA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
-									printf("BBB\n");
 									return 1;
 								}
 							}
@@ -830,11 +828,9 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 						{
 							for(int i = 0; i < 32; i = i + 2){
 								if (blancos[i] == fild - 48 + k && blancos[i+1] == cold - 96 + k){
-									printf("AAAA\n");
 									return 1;
 								}
 								if (negros[i] == fild - 48 + k && negros[i+1] == cold - 96 + k){
-									printf("BBBB\n");
 									return 1;
 								}
 							}
@@ -1592,6 +1588,26 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 	}
 }
 
+void *listenChatMessage(void *socket_void) {
+	int *socket0 = socket_void;
+	int socket = *socket0;
+	while (1) {
+		char message[1024];
+		recv(socket, message, 1024, 0);
+		if (message[0] == 6) {
+			char msg[message[1]];
+			for (int i = 0; i < message[1]; ++i)
+			{
+				msg[i] = message[i+2];
+			}
+			printf("%s\n", msg);
+		}
+	}
+
+
+	return NULL;
+}
+
 int main(int argc, char const *argv[])
 {
 	char negros[32];
@@ -1600,14 +1616,21 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+    pthread_t thread;
+	pthread_create(&thread, NULL, listenChatMessage, &socket);
+    printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
 
     	INICIO:
-		scanf("%s", message);
+		//scanf("%s", message);
+		//fflush(stdin);
+		fgets (message, 1024, stdin);
+		if ((strlen(message)>0) && (message[strlen (message) - 1] == '\n'))
+        	message[strlen (message) - 1] = '\0';
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
+				pthread_cancel(thread);
 				char id_invite[4];
 				for (int i = 0; i < 4; ++i)
 				{
@@ -1617,11 +1640,16 @@ int main(int argc, char const *argv[])
 				int gameon;
 				gameon = iniviteClient(socket, id_invite);
 				if (gameon == 0){
+					pthread_t thread;
+					pthread_create(&thread, NULL, listenChatMessage, &socket);
 					goto INICIO;
 				}
 			} 
 			else if (message[1] == 'a') {
+				pthread_cancel(thread);
 				matchMakingList(socket);
+				pthread_t thread;
+				pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'w') {
@@ -1629,8 +1657,10 @@ int main(int argc, char const *argv[])
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
+				pthread_cancel(thread);
 			}
 			else if (message[1] == 's') {
+				pthread_cancel(thread);
 				char message[1];
 				message[0] = 14;
 				sendMessage(socket, message);
@@ -1654,6 +1684,8 @@ int main(int argc, char const *argv[])
 				printf("	Players Playing: %i\n", cantiidad_playing);
 				printf("	Version: %i.%i.%i\n", X, Y, Z);
 				printf("	ID: %i\n", id_implementacion);
+				pthread_t thread;
+				pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'q') {
@@ -1686,11 +1718,13 @@ int main(int argc, char const *argv[])
 					int decicion = 0;
 					scanf("%i", &decicion);
 					if (decicion == 1){
+						printf("!\n");
 						sendAsnwerToInvitation(socket, "1", id_emisor);
 						id_destino[0] = id_emisor/100;
 						id_destino[1] = id_emisor-(id_emisor/100)*100;
 					}
 					else if (decicion == 0){
+						printf("!!\n");
 						sendAsnwerToInvitation(socket, "0", id_emisor);
 					}
 				}
@@ -1757,7 +1791,7 @@ int main(int argc, char const *argv[])
 						message[1] = 1;
 						message[2] = 0;
 						sendMessage(socket, message);
-						printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+						printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 						goto INICIO;
 					}
 					MOV:
@@ -1795,7 +1829,7 @@ int main(int argc, char const *argv[])
 							message[1] = 1;
 							message[2] = 0;
 							sendMessage(socket, message);
-							printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+							printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 							goto INICIO;
 						}
 					}
@@ -1810,14 +1844,48 @@ int main(int argc, char const *argv[])
 					sendMessage(socket, message);
 					char response[3];
 					recv(socket, response, 1024, 0);
-					printf("/i:id -> Invite Player ID, /a -> Available Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+					printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 					goto INICIO;
 				}
 
 			}
 		} else {
-
-			//sendMessage(socket, message);
+			if ( strlen(message) != 0 ) {
+				int size_nick = 0;
+				for (int i = 0; i < 20; ++i)
+				{
+					if ( nickname[i] == '\0') {
+						break;
+					}
+					size_nick++;
+				}
+				int size_msg = 0;
+				for (int i = 0; i < 1024; ++i)
+				{
+					size_msg++;
+					if ( message[i] == '\0') {
+						break;
+					}
+					
+				}
+				char chat_message[size_nick+2+size_msg+4];
+				chat_message[0] = 6;
+				chat_message[1] = size_nick+2+size_msg+2;
+				chat_message[2] = 0;
+				chat_message[3] = 0;
+				for (int i = 0; i < size_nick; ++i)
+				{
+					chat_message[i+4] = nickname[i];
+				}
+				chat_message[size_nick+4] = ':';
+				chat_message[size_nick+5] = ' ';
+				for (int i = 0; i < size_msg; ++i)
+				{
+					chat_message[i+4+size_nick+2] = message[i];
+				}
+				chat_message[size_msg+size_nick+6] = '\0';
+				sendMessage(socket, chat_message);
+			} 
 
 		}
 

@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8080
+#define PORT 8081
 
 int X = 1;
 int Y = 0;
@@ -114,6 +114,24 @@ void eliminarCliente( char id[2] ) {
 		
 	}
 
+}
+
+int oponenteValido( char id[2] ) {
+	struct Cliente *i = primero;
+
+	while(i != NULL) {
+		if ( i -> id[0] == id[0] && i -> id[1] == id[1] ){
+			if ( i -> status == 1 ) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+
+		i = i -> sgte;
+	}
+
+	return 1;
 }
 
 
@@ -326,6 +344,7 @@ void *listenClient(void *socket_void){
 			char id_receptor[2];
 			id_receptor[0] = message[2];
 			id_receptor[1] = message[3];
+			//int existe = oponenteValido( id_receptor );
 			int socket_receptor = buscarSocketPorID( id_receptor );
 			char *nickname = buscarNicknamePorSocket( socket );
 			char message[40];
@@ -380,6 +399,34 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 6 ) {
+			int size  = message[1];
+			int length_message = size - 2;
+			char id_destino[2];
+			id_destino[0] = message[2];
+			id_destino[1] = message[3];
+			char msg[length_message+2];
+			msg[0] = 6;
+			msg[1] = length_message;
+			for (int i = 0; i < length_message; ++i)
+			{
+				msg[i+2] = message[i+4];
+			}
+			if ( id_destino[0] == 0 || id_destino[1] == 0 ) {
+				// enviar a todos
+				struct Cliente *i = primero;
+
+				while (i != NULL) {
+					if ( (i -> status == 0 ) && i -> socket != socket) {
+						send(i -> socket, msg, 1024, 0);
+					}
+
+					i = i -> sgte;
+				}
+
+			} else {
+				int socket_destino = buscarSocketPorID( id_destino );
+				send(socket_destino, msg, 1024, 0);
+			}
 			
 		}
 		else if ( fid == 7 ) {
@@ -508,18 +555,6 @@ int initializeServer(char* ip, int port){
 		pthread_t thread;
 		pthread_create(&thread, NULL, listenClient, &newSocket);
 
-		/*
-		if (socket_wait == -1){
-			socket_wait = newSocket;
-		} else {
-			char str[20];
-			sprintf(str, "%d", socket_wait);
-			sendMessage(newSocket, str);
-			sprintf(str, "%d", newSocket);
-			sendMessage(socket_wait, str);
-			socket_wait = -1;
-		}
-		*/
 	}
 	
 	return newSocket;
