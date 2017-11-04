@@ -344,20 +344,29 @@ void *listenClient(void *socket_void){
 			char id_receptor[2];
 			id_receptor[0] = message[2];
 			id_receptor[1] = message[3];
-			//int existe = oponenteValido( id_receptor );
-			int socket_receptor = buscarSocketPorID( id_receptor );
-			char *nickname = buscarNicknamePorSocket( socket );
-			char message[40];
-			int r_fid = 5;
-			message[0] = r_fid;
-			message[1] = 40;
-			message[2] = id[0];
-			message[3] = id[1];
-			for (int i = 0; i < strlen(nickname)+1; ++i)
-			{
-				message[i+4] = nickname[i];
+			int existe = oponenteValido( id_receptor );
+			if (existe == 0) {
+				int socket_receptor = buscarSocketPorID( id_receptor );
+				char *nickname = buscarNicknamePorSocket( socket );
+				char message[40];
+				int r_fid = 5;
+				message[0] = r_fid;
+				message[1] = 40;
+				message[2] = id[0];
+				message[3] = id[1];
+				for (int i = 0; i < strlen(nickname)+1; ++i)
+				{
+					message[i+4] = nickname[i];
+				}
+				send(socket_receptor, message, 1024, 0);
+			} else {
+				char message[2];
+				int r_fid = 4;
+				message[0] = r_fid;
+				message[1] = 0;
+				send(socket, message, 1024, 0);
 			}
-			send(socket_receptor, message, 1024, 0);
+			
 		}
 		else if ( fid == 5 ) {
 			char id_receptor[2];

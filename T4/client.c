@@ -554,7 +554,7 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 	sendMessage(clientSocket, ask_f4);
 	char* message_answer = malloc( 1024 );
 	message_answer = recieveMessage(clientSocket, message_answer);
-	if (message_answer[1] == 0) {
+	if (message_answer[0] == 4 && message_answer[1] == 0) {
 		printf("This player is not waiting\n");
 		return 2;
 	}
@@ -1590,16 +1590,23 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 
 void *listenChatMessage(void *socket_void) {
 	int *socket0 = socket_void;
+	printf("!\n");
 	int socket = *socket0;
+	printf("!\n");
 	while (1) {
 		char message[1024];
+		printf("!\n");
 		recv(socket, message, 1024, 0);
+		printf("!\n");
 		if (message[0] == 6) {
 			char msg[message[1]];
+			printf("!\n");
 			for (int i = 0; i < message[1]; ++i)
 			{
+				printf("!\n");
 				msg[i] = message[i+2];
 			}
+			printf("!\n");
 			printf("%s\n", msg);
 		}
 	}
@@ -1616,8 +1623,8 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    pthread_t thread;
-	pthread_create(&thread, NULL, listenChatMessage, &socket);
+    //pthread_t thread;
+	//pthread_create(&thread, NULL, listenChatMessage, &socket);
     printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
@@ -1630,7 +1637,7 @@ int main(int argc, char const *argv[])
         	message[strlen (message) - 1] = '\0';
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
-				pthread_cancel(thread);
+				//pthread_cancel(thread);
 				char id_invite[4];
 				for (int i = 0; i < 4; ++i)
 				{
@@ -1639,17 +1646,17 @@ int main(int argc, char const *argv[])
 				printf("Inviting %s\n", id_invite);
 				int gameon;
 				gameon = iniviteClient(socket, id_invite);
-				if (gameon == 0){
-					pthread_t thread;
-					pthread_create(&thread, NULL, listenChatMessage, &socket);
+				if (gameon != 1){
+					//pthread_t thread;
+					//pthread_create(&thread, NULL, listenChatMessage, &socket);
 					goto INICIO;
 				}
 			} 
 			else if (message[1] == 'a') {
-				pthread_cancel(thread);
+				//pthread_cancel(thread);
 				matchMakingList(socket);
-				pthread_t thread;
-				pthread_create(&thread, NULL, listenChatMessage, &socket);
+				//pthread_t thread;
+				//pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'w') {
@@ -1657,10 +1664,10 @@ int main(int argc, char const *argv[])
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
-				pthread_cancel(thread);
+				//pthread_cancel(thread);
 			}
 			else if (message[1] == 's') {
-				pthread_cancel(thread);
+				//pthread_cancel(thread);
 				char message[1];
 				message[0] = 14;
 				sendMessage(socket, message);
@@ -1684,8 +1691,8 @@ int main(int argc, char const *argv[])
 				printf("	Players Playing: %i\n", cantiidad_playing);
 				printf("	Version: %i.%i.%i\n", X, Y, Z);
 				printf("	ID: %i\n", id_implementacion);
-				pthread_t thread;
-				pthread_create(&thread, NULL, listenChatMessage, &socket);
+				//pthread_t thread;
+				//pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'q') {
