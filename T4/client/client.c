@@ -575,7 +575,7 @@ void cancel_thread(int clientSocket, char idd[2]){
 	char cancel_msg[1];
 	cancel_msg[0] = fid;
 	sendMessage(clientSocket, cancel_msg);
-	while(__sync_val_compare_and_swap(&lock, 0, 1));
+	while(lock);
 	lock = 1;
 }
 
@@ -1676,21 +1676,18 @@ int main(int argc, char const *argv[])
 	printf("Client\n");
     pthread_t thread;
 	pthread_create(&thread, NULL, listenChatMessage, &socket);
-    printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+    printf("/i:id -> Invite Waiting Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
 		
 
     	INICIO:
-		//scanf("%s", message);
-		//fflush(stdin);
 		fgets (message, 1024, stdin);
 		if ((strlen(message)>0) && (message[strlen (message) - 1] == '\n'))
         	message[strlen (message) - 1] = '\0';
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
 				cancel_thread(socket, ppid);
-				//pthread_kill(thread, SIGQUIT);
 				char id_invite[4];
 				for (int i = 0; i < 4; ++i)
 				{
@@ -1707,23 +1704,20 @@ int main(int argc, char const *argv[])
 			} 
 			else if (message[1] == 'a') {
 				cancel_thread(socket, ppid);
-				//pthread_kill(thread, SIGQUIT );
 				matchMakingList(socket);
 				pthread_t thread;
 				pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'w') {
+				cancel_thread(socket, ppid);
 				char message[1];
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
-				cancel_thread(socket, ppid);
-				//pthread_kill(thread, SIGQUIT );
 			}
 			else if (message[1] == 's') {
 				cancel_thread(socket, ppid);
-				//pthread_kill(thread, SIGQUIT );
 				char message[1];
 				message[0] = 14;
 				sendMessage(socket, message);
@@ -1854,7 +1848,9 @@ int main(int argc, char const *argv[])
 						message[1] = 1;
 						message[2] = 0;
 						sendMessage(socket, message);
-						printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+						pthread_t thread;
+						pthread_create(&thread, NULL, listenChatMessage, &socket);
+						printf("/i:id -> Invite Waiting Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 						goto INICIO;
 					}
 					MOV:
@@ -1892,7 +1888,9 @@ int main(int argc, char const *argv[])
 							message[1] = 1;
 							message[2] = 0;
 							sendMessage(socket, message);
-							printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+							pthread_t thread;
+							pthread_create(&thread, NULL, listenChatMessage, &socket);
+							printf("/i:id -> Invite Waiting Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 							goto INICIO;
 						}
 					}
@@ -1907,7 +1905,9 @@ int main(int argc, char const *argv[])
 					sendMessage(socket, message);
 					char response[3];
 					recv(socket, response, 1024, 0);
-					printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
+					pthread_t thread;
+					pthread_create(&thread, NULL, listenChatMessage, &socket);
+					printf("/i:id -> Invite Waiting Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
 					goto INICIO;
 				}
 

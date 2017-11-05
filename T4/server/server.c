@@ -259,7 +259,6 @@ void *listenClient(void *socket_void){
 	char id[2];
 	while(1) {
 		recv(socket, message, 1024, 0);
-		printf("llego mensaje\n");
 		int fid = message[0];
 		if (fid == 1) {
 
@@ -518,15 +517,12 @@ void *listenClient(void *socket_void){
 			
 		}
 		else if ( fid == 17 ) {
-			printf("WAITING STATUS -> %s\n", id);
 			cambiarEstadoPorID(id, 1);
 		}
 		else if ( fid == 18 ) {
-			printf("PLAYING STATUS -> %s\n", id);
 			cambiarEstadoPorID(id, 2);
 		}
 		else if ( fid == 19 ) {
-			printf("CONNECTED STATUS -> %s\n", id);
 			cambiarEstadoPorID(id, 0);
 		}
 		else if ( fid == 20 ) {
