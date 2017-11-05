@@ -10,10 +10,10 @@
 #include <pthread.h>
 #include <signal.h> 
 #define IP "0.0.0.0"
-#define PORT 8083
+#define PORT 8084
 
 char id_destino[2];
-
+char ppid[2];
 char id[2];
 char nickname[20];
 
@@ -568,6 +568,19 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 	return 0;
 }
 
+void cancel_thread(int clientSocket, char idd[2]){
+	int fid = 20;
+	char ask_f4[4];
+	ask_f4[0] = fid;
+	ask_f4[1] = 2;
+	ask_f4[2] = idd[0];
+	ask_f4[3] = idd[1];
+	sendMessage(clientSocket, ask_f4);
+	char message[1024];
+	recv(clientSocket, message, 1024, 0);
+	//printf("llego: %s\n", message);
+}
+
 void sendAsnwerToInvitation(int clientSocket, char answerr[1], int id_answ ){
 	char id[2];
 	int c1, c2;
@@ -675,6 +688,8 @@ int initializeClient(char* ip, int port){
 	recieveMessage(clientSocket, message_init);
 	id[0] = message_init[2];
 	id[1] = message_init[3];
+	ppid[0] = message_init[2];
+	ppid[1] = message_init[3];
 	int n, m;
 	n = message_init[2];
 	m = message_init[3];
@@ -1594,8 +1609,17 @@ void *listenChatMessage(void *socket_void) {
 	int socket = *socket0;
 	while (1) {
 		char message[1024];
-
 		recv(socket, message, 1024, 0);
+		if (message[0] == "$"[0] && message[1] == ")"[0] && message[2] == "!"[0] && message[3] == "="[0]){
+			int fid = 20;
+			char ask_f4[4];
+			ask_f4[0] = fid;
+			ask_f4[1] = 2;
+			ask_f4[2] = ppid[0];
+			ask_f4[3] = ppid[1];
+			sendMessage(socket, ask_f4);
+			return NULL;
+		}
 
 		if (message[0] == 6) {
 			char msg[message[1]];
@@ -1625,6 +1649,7 @@ int main(int argc, char const *argv[])
     printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
+		
 
     	INICIO:
 		//scanf("%s", message);
@@ -1634,7 +1659,8 @@ int main(int argc, char const *argv[])
         	message[strlen (message) - 1] = '\0';
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
-				pthread_kill(thread, SIGQUIT);
+				cancel_thread(socket, ppid);
+				//pthread_kill(thread, SIGQUIT);
 				char id_invite[4];
 				for (int i = 0; i < 4; ++i)
 				{
@@ -1650,7 +1676,8 @@ int main(int argc, char const *argv[])
 				}
 			} 
 			else if (message[1] == 'a') {
-				pthread_kill(thread, SIGQUIT );
+				cancel_thread(socket, ppid);
+				//pthread_kill(thread, SIGQUIT );
 				matchMakingList(socket);
 				pthread_t thread;
 				pthread_create(&thread, NULL, listenChatMessage, &socket);
@@ -1661,10 +1688,12 @@ int main(int argc, char const *argv[])
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
-				pthread_kill(thread, SIGQUIT );
+				cancel_thread(socket, ppid);
+				//pthread_kill(thread, SIGQUIT );
 			}
 			else if (message[1] == 's') {
-				pthread_kill(thread, SIGQUIT );
+				cancel_thread(socket, ppid);
+				//pthread_kill(thread, SIGQUIT );
 				char message[1];
 				message[0] = 14;
 				sendMessage(socket, message);
@@ -1693,6 +1722,7 @@ int main(int argc, char const *argv[])
 				goto INICIO;
 			}
 			else if (message[1] == 'q') {
+				cancel_thread(socket, ppid);
 				int fid = 9;
 				char message[1];
 				message[0] = fid;
