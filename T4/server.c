@@ -449,10 +449,12 @@ void *listenClient(void *socket_void){
 			send(socket_receptor, message, 1024, 0);
 		}
 		else if ( fid == 9 ) {
+			printf("llego mensaje desconexion\n");
 			char returnMessage[3];
 			returnMessage[0] = 9;
 			returnMessage[1] = 1;
 			returnMessage[2] = 0;
+			printf("enviando mensje de termino socket: %i\n", socket);
 			send(socket, returnMessage, 1024, 0);
 			char returnMessage2[4];
 			returnMessage2[0] = 10;
@@ -461,11 +463,13 @@ void *listenClient(void *socket_void){
 			returnMessage2[3] = id[1];
 			int socket_contrincante;
 			socket_contrincante = buscarSocketContrincantePorID(id);
-			send(socket_contrincante, returnMessage2, 1024, 0);
-			char resp_message_contrincante[3];
-			recv(socket, resp_message_contrincante, 1024, 0);
-			eliminarContrincantePorSocket(socket_contrincante);
-			cambiarEstadoPorSocket(socket_contrincante, 0);
+			if (socket_contrincante > -1){
+				send(socket_contrincante, returnMessage2, 1024, 0);
+				char resp_message_contrincante[3];
+				recv(socket, resp_message_contrincante, 1024, 0);
+				eliminarContrincantePorSocket(socket_contrincante);
+				cambiarEstadoPorSocket(socket_contrincante, 0);
+			}
 			eliminarCliente( id );
 			pthread_exit(NULL);
 			

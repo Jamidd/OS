@@ -20,6 +20,8 @@ char nickname[20];
 int color;
 int lock = 1;
 
+int sockete;
+
 char tablero[630] = "  | a | b | c | d | e | f | g | h |\n-----------------------------------\n1 |   |   |   |   |   |   |   |   |\n-----------------------------------\n2 |   |   |   |   |   |   |   |   |\n-----------------------------------\n3 |   |   |   |   |   |   |   |   |\n-----------------------------------\n4 |   |   |   |   |   |   |   |   |\n-----------------------------------\n5 |   |   |   |   |   |   |   |   |\n-----------------------------------\n6 |   |   |   |   |   |   |   |   |\n-----------------------------------\n7 |   |   |   |   |   |   |   |   |\n-----------------------------------\n8 |   |   |   |   |   |   |   |   |";
 
 void printtablero(char *blancos, char *negros){
@@ -1631,14 +1633,47 @@ void *listenChatMessage(void *socket_void) {
 	return NULL;
 }
 
+void SigInt_Handler(int n_signal)
+{	
+	printf("termine\n");
+    int fid = 9;
+	char message[1];
+	message[0] = fid;
+	//char response[1025];
+	sendMessage(sockete, message);
+	//recv(sockete, response, 1024, 0);
+	//printf("res puesta %s\n", response);
+	exit(0);
+}
+
+void SigBreak_Handler(int n_signal)
+{	
+	printf("termine2\n");
+    int fid = 9;
+	char message[1];
+	message[0] = fid;
+	//char response[1025];
+	sendMessage(sockete, message);
+	//recv(sockete, response, 1024, 0);
+	//printf("res puesta %s\n", response);
+	exit(0);
+}
+
 int main(int argc, char const *argv[])
-{
+{	
+
+	signal(SIGINT, &SigInt_Handler);
+    signal(SIGTSTP, &SigBreak_Handler);
+    signal(SIGHUP, &SigBreak_Handler);
+
+	int socket;
+    socket = initializeClient(IP, PORT);
+	sockete = socket;
+
 	char negros[32];
 	char blancos[32];
 	
-	int socket;
 	printf("Client\n");
-    socket = initializeClient(IP, PORT);
     pthread_t thread;
 	pthread_create(&thread, NULL, listenChatMessage, &socket);
     printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
