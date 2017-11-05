@@ -8,8 +8,9 @@
 #include <netinet/in.h>
 #include "math.h"
 #include <pthread.h>
+#include <signal.h> 
 #define IP "0.0.0.0"
-#define PORT 8081
+#define PORT 8083
 
 char id_destino[2];
 
@@ -659,7 +660,7 @@ int initializeClient(char* ip, int port){
 	printf("\n");
 	size_t size = strlen(nickname) + 1;
 	char ch = size;
-	char* message_init = malloc( size + 2 );
+	char message_init[1024];
 	int fid = 2;
 	char fid_char = fid;
 	message_init[0] = fid_char;
@@ -671,7 +672,7 @@ int initializeClient(char* ip, int port){
 	message_init[size + 1] = '\0';
 	size = message_init[1];
 	sendMessage(clientSocket, message_init);
-	message_init = recieveMessage(clientSocket, message_init);
+	recieveMessage(clientSocket, message_init);
 	id[0] = message_init[2];
 	id[1] = message_init[3];
 	int n, m;
@@ -679,7 +680,6 @@ int initializeClient(char* ip, int port){
 	m = message_init[3];
 	printf("tu id es: %i%i\n", n, m);
 	// termina funcion 2
-	
 	return clientSocket;
 }
 
@@ -1589,29 +1589,25 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 }
 
 void *listenChatMessage(void *socket_void) {
+	
 	int *socket0 = socket_void;
-	printf("!\n");
 	int socket = *socket0;
-	printf("!\n");
 	while (1) {
 		char message[1024];
-		printf("!\n");
+
 		recv(socket, message, 1024, 0);
-		printf("!\n");
+
 		if (message[0] == 6) {
 			char msg[message[1]];
-			printf("!\n");
+	
 			for (int i = 0; i < message[1]; ++i)
 			{
-				printf("!\n");
 				msg[i] = message[i+2];
 			}
-			printf("!\n");
+	
 			printf("%s\n", msg);
 		}
 	}
-
-
 	return NULL;
 }
 
@@ -1623,8 +1619,9 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    //pthread_t thread;
-	//pthread_create(&thread, NULL, listenChatMessage, &socket);
+    printf("socket mio: %i\n", socket);
+    pthread_t thread;
+	pthread_create(&thread, NULL, listenChatMessage, &socket);
     printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
     char message[1024];
     while (1) {
@@ -1637,7 +1634,7 @@ int main(int argc, char const *argv[])
         	message[strlen (message) - 1] = '\0';
 		if (message[0] == '/') {
 			if (message[1] == 'i'){
-				//pthread_cancel(thread);
+				pthread_kill(thread, SIGQUIT);
 				char id_invite[4];
 				for (int i = 0; i < 4; ++i)
 				{
@@ -1647,16 +1644,16 @@ int main(int argc, char const *argv[])
 				int gameon;
 				gameon = iniviteClient(socket, id_invite);
 				if (gameon != 1){
-					//pthread_t thread;
-					//pthread_create(&thread, NULL, listenChatMessage, &socket);
+					pthread_t thread;
+					pthread_create(&thread, NULL, listenChatMessage, &socket);
 					goto INICIO;
 				}
 			} 
 			else if (message[1] == 'a') {
-				//pthread_cancel(thread);
+				pthread_kill(thread, SIGQUIT );
 				matchMakingList(socket);
-				//pthread_t thread;
-				//pthread_create(&thread, NULL, listenChatMessage, &socket);
+				pthread_t thread;
+				pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'w') {
@@ -1664,10 +1661,10 @@ int main(int argc, char const *argv[])
 				message[0] = 17;
 				sendMessage(socket, message);
 				printf("waiting\n");
-				//pthread_cancel(thread);
+				pthread_kill(thread, SIGQUIT );
 			}
 			else if (message[1] == 's') {
-				//pthread_cancel(thread);
+				pthread_kill(thread, SIGQUIT );
 				char message[1];
 				message[0] = 14;
 				sendMessage(socket, message);
@@ -1691,8 +1688,8 @@ int main(int argc, char const *argv[])
 				printf("	Players Playing: %i\n", cantiidad_playing);
 				printf("	Version: %i.%i.%i\n", X, Y, Z);
 				printf("	ID: %i\n", id_implementacion);
-				//pthread_t thread;
-				//pthread_create(&thread, NULL, listenChatMessage, &socket);
+				pthread_t thread;
+				pthread_create(&thread, NULL, listenChatMessage, &socket);
 				goto INICIO;
 			}
 			else if (message[1] == 'q') {
@@ -1896,8 +1893,6 @@ int main(int argc, char const *argv[])
 
 		}
 
-		
     }
-	
 	return 0;
 }

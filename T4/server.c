@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8081
+#define PORT 8083
 
 int X = 1;
 int Y = 0;
@@ -259,6 +259,7 @@ void *listenClient(void *socket_void){
 	char id[2];
 	while(1) {
 		recv(socket, message, 1024, 0);
+		printf("llego mensaje\n");
 		int fid = message[0];
 		if (fid == 1) {
 
@@ -559,6 +560,7 @@ int initializeServer(char* ip, int port){
 
 	addr_size = sizeof serverStorage;
 	while(1) {
+		int newSocket;
 		newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
 		printf("Conected %i \n", newSocket);
 		pthread_t thread;
