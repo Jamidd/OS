@@ -570,12 +570,12 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 
 void cancel_thread(int clientSocket, char idd[2]){
 	int fid = 20;
-	char ask_f4[4];
-	ask_f4[0] = fid;
-	ask_f4[1] = 2;
-	ask_f4[2] = idd[0];
-	ask_f4[3] = idd[1];
-	sendMessage(clientSocket, ask_f4);
+	char cancel_msg[4];
+	cancel_msg[0] = fid;
+	cancel_msg[1] = 2;
+	cancel_msg[2] = idd[0];
+	cancel_msg[3] = idd[1];
+	sendMessage(clientSocket, cancel_msg);
 	char message[1024];
 	recv(clientSocket, message, 1024, 0);
 	//printf("llego: %s\n", message);
@@ -1099,12 +1099,6 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
-			for(int i = 0; i < 32; i = i + 2){
-				if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
-					return 1;
-				if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
-					return 1;
-			}
 			if ( abs(cold - colo) == 1 && fild == filo - 1 ) {
 				int come = 0;
 				for(int i = 0; i < 32; i = i + 2){
@@ -1118,6 +1112,12 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 					return 1;
 				}
 			} else {
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+						return 1;
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+						return 1;
+				}
 				if( cold != colo ) {
 					return 1;
 				}
@@ -1510,12 +1510,6 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 			}
 			
 		}else if (p == "p"[0]){
-			for(int i = 0; i < 32; i = i + 2){
-				if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
-					return 1;
-				if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
-					return 1;
-			}
 			if ( abs(cold - colo) == 1 && fild == filo + 1 ) {
 				int come = 0;
 				for(int i = 0; i < 32; i = i + 2){
@@ -1529,6 +1523,12 @@ int cambiarpieza(char *blancos, char *negros, int color, char filo, char colo, c
 					return 1;
 				}
 			} else {
+				for(int i = 0; i < 32; i = i + 2){
+					if (blancos[i] == fild - 48 && blancos[i+1] == cold - 96)
+						return 1;
+					if (negros[i] == fild - 48 && negros[i+1] == cold - 96)
+						return 1;
+				}
 				if( cold != colo ) {
 					return 1;
 				}
@@ -1612,12 +1612,12 @@ void *listenChatMessage(void *socket_void) {
 		recv(socket, message, 1024, 0);
 		if (message[0] == "$"[0] && message[1] == ")"[0] && message[2] == "!"[0] && message[3] == "="[0]){
 			int fid = 20;
-			char ask_f4[4];
-			ask_f4[0] = fid;
-			ask_f4[1] = 2;
-			ask_f4[2] = ppid[0];
-			ask_f4[3] = ppid[1];
-			sendMessage(socket, ask_f4);
+			char cancel_msg[4];
+			cancel_msg[0] = fid;
+			cancel_msg[1] = 2;
+			cancel_msg[2] = ppid[0];
+			cancel_msg[3] = ppid[1];
+			sendMessage(socket, cancel_msg);
 			return NULL;
 		}
 
