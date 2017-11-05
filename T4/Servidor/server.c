@@ -243,7 +243,7 @@ void eliminarContrincantePorSocket( int socket ) {
 
 
 char* recieveMessage(int socket, char* message){
-  printf("status message... ♔ \n");
+  //printf("status message... ♔ \n");
   recv(socket, message, 1024, 0);
   return message;
 }
@@ -310,7 +310,7 @@ void *listenClient(void *socket_void){
 				i = i -> sgte;
 			}
 
-			printf("SIZE: %i\n", size);
+			//printf("SIZE: %i\n", size);
 
 			char returnMessage[size];
 			char count_str[4];
@@ -337,7 +337,7 @@ void *listenClient(void *socket_void){
 				}
 				j = j -> sgte;
 			}
-			printf("RET %s\n", returnMessage);
+			//printf("RET %s\n", returnMessage);
 			send(socket, returnMessage, 1024, 0);
 
 		}
@@ -445,16 +445,16 @@ void *listenClient(void *socket_void){
 		else if ( fid == 8 ) {
 			int socket_receptor;
 			socket_receptor = buscarSocketContrincantePorID(id);
-			printf("enviando movida a socket |%i|\n",socket_receptor);
+			//printf("enviando movida a socket |%i|\n",socket_receptor);
 			send(socket_receptor, message, 1024, 0);
 		}
 		else if ( fid == 9 ) {
-			printf("llego mensaje desconexion\n");
+			//printf("llego mensaje desconexion\n");
 			char returnMessage[3];
 			returnMessage[0] = 9;
 			returnMessage[1] = 1;
 			returnMessage[2] = 0;
-			printf("enviando mensje de termino socket: %i\n", socket);
+			//printf("enviando mensje de termino socket: %i\n", socket);
 			send(socket, returnMessage, 1024, 0);
 			char returnMessage2[4];
 			returnMessage2[0] = 10;

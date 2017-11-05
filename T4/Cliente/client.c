@@ -531,7 +531,7 @@ void printtablero(char *blancos, char *negros){
 }
 
 char* recieveMessage(int socket, char* message){
-  printf("♔ ... \n");
+  //printf("♔ ... \n");
   recv(socket, message, 1024, 0);
   return message;
 }
@@ -561,7 +561,7 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 		printf("This player is not waiting\n");
 		return 2;
 	}
-	printf("The answer is: |%c|\n", message_answer[2]);
+	//printf("The answer is: |%c|\n", message_answer[2]);
 	if (message_answer[2] == '1'){
 		id_destino[0] = id[0];
 		id_destino[1] = id[1];
@@ -1635,7 +1635,7 @@ void *listenChatMessage(void *socket_void) {
 
 void SigInt_Handler(int n_signal)
 {	
-	printf("termine\n");
+	//printf("termine\n");
     int fid = 9;
 	char message[1];
 	message[0] = fid;
@@ -1648,7 +1648,7 @@ void SigInt_Handler(int n_signal)
 
 void SigBreak_Handler(int n_signal)
 {	
-	printf("termine2\n");
+	//printf("termine2\n");
     int fid = 9;
 	char message[1];
 	message[0] = fid;
@@ -1782,7 +1782,7 @@ int main(int argc, char const *argv[])
 					int decicion = 0;
 					scanf("%i", &decicion);
 					if (decicion == 1){
-						printf("!\n");
+						//printf("!\n");
 						sendAsnwerToInvitation(socket, "1", id_emisor);
 						id_destino[0] = id_emisor/100;
 						id_destino[1] = id_emisor-(id_emisor/100)*100;
@@ -1841,7 +1841,7 @@ int main(int argc, char const *argv[])
 					}
 					//usleep(200);
 					printtablero(blancos, negros);
-					printf("The other player move: %c %c %c %c %c\n", msg[2], msg[3], msg[4], msg[5], msg[6]);
+					printf("The other player move: piece-> %c from-> %c%c  to-> %c%c\n", msg[6], msg[2], msg[3], msg[4], msg[5]);
 					if ((blancos[0] == 0 - 48 && blancos[1] == 0 - 96) || (negros[0] == 0 - 48 && negros[1] == 0 - 96)) {
 						if ((color == 0 && negros[0] == 0 - 48 && negros[1] == 0 - 96) || (color == 1 && blancos[0] == 0 - 48 && blancos[1] == 0 - 96)){
 							printf("You won!\n");
