@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #define IP "0.0.0.0"
-#define PORT 8084
+#define PORT 8080
 
 int X = 1;
 int Y = 0;
@@ -526,20 +526,10 @@ void *listenClient(void *socket_void){
 			cambiarEstadoPorID(id, 0);
 		}
 		else if ( fid == 20 ) {
-			char id_receptor[2];
-			id_receptor[0] = message[2];
-			id_receptor[1] = message[3];
-			int n, m;
-			n = id_receptor[0];
-			m = id_receptor[1];
-			int socket_receptor = buscarSocketPorID( id_receptor );
-			char message[4];
-			message[0] = "$"[0];
-			message[1] = ")"[0];
-			message[2] = "!"[0];
-			message[3] = "="[0];
+			char message[1];
+			message[0] = 20;
 			//printf("socket receptor : %i  mensaje : %s\n", socket_receptor, message);
-			send(socket_receptor, message, 1024, 0);			
+			send(socket, message, 1024, 0);			
 		}
 	}
 	return NULL;
@@ -592,16 +582,6 @@ int main(int argc, char const *argv[])
 	int socket;
     printf("Server\n");
     socket = initializeServer(IP, PORT);
-    printf("!!\n");
-    while (1) {
-      char* message = malloc(sizeof(char)*1024);
-      char* msg = recieveMessage(socket, message);
-      printf(msg, "%s\n");
-      printf("\nYour Message: ");
-      scanf("%s", msg);
-      printf("\n");
-      sendMessage(socket, msg);
-    }
 	  
 	return 0;
 }

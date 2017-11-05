@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <signal.h> 
 #define IP "0.0.0.0"
-#define PORT 8084
+#define PORT 8080
 
 char id_destino[2];
 char ppid[2];
@@ -18,7 +18,7 @@ char id[2];
 char nickname[20];
 
 int color;
-
+int lock = 1;
 
 char tablero[630] = "  | a | b | c | d | e | f | g | h |\n-----------------------------------\n1 |   |   |   |   |   |   |   |   |\n-----------------------------------\n2 |   |   |   |   |   |   |   |   |\n-----------------------------------\n3 |   |   |   |   |   |   |   |   |\n-----------------------------------\n4 |   |   |   |   |   |   |   |   |\n-----------------------------------\n5 |   |   |   |   |   |   |   |   |\n-----------------------------------\n6 |   |   |   |   |   |   |   |   |\n-----------------------------------\n7 |   |   |   |   |   |   |   |   |\n-----------------------------------\n8 |   |   |   |   |   |   |   |   |";
 
@@ -570,15 +570,11 @@ int iniviteClient(int clientSocket, char id_str_4[4] ){
 
 void cancel_thread(int clientSocket, char idd[2]){
 	int fid = 20;
-	char cancel_msg[4];
+	char cancel_msg[1];
 	cancel_msg[0] = fid;
-	cancel_msg[1] = 2;
-	cancel_msg[2] = idd[0];
-	cancel_msg[3] = idd[1];
 	sendMessage(clientSocket, cancel_msg);
-	char message[1024];
-	recv(clientSocket, message, 1024, 0);
-	//printf("llego: %s\n", message);
+	while(__sync_val_compare_and_swap(&lock, 0, 1));
+	lock = 1;
 }
 
 void sendAsnwerToInvitation(int clientSocket, char answerr[1], int id_answ ){
@@ -625,22 +621,28 @@ void matchMakingList(int clientSocket) {
 		cant_clientes_str[i] = message_answer[i];
 	}
 	int cant_clientes = atoi(cant_clientes_str);
-	printf("Players:\n");
-	int avance = 4;
-	for (int i = 0; i < cant_clientes; ++i)
-	{	
-		int id_1, id_2, id;
-		id_1 = message_answer[avance];
-		id_2 = message_answer[avance+1];
-		id = id_1*100+id_2;
-		int byte_nickname = message_answer[avance+2];
-		char nickname_cliente[byte_nickname];
-		for (int j = avance + 3; j < avance + 3 + byte_nickname; ++j)
-		{
-			nickname_cliente[j - (avance + 3)] = message_answer[j];
+	if (cant_clientes == 0) {
+		printf("No waiting players\n");
+	}
+	else {
+		printf("Players:\n");
+		int avance = 4;
+		for (int i = 0; i < cant_clientes; ++i)
+		{	
+			int id_1, id_2, id;
+			id_1 = message_answer[avance];
+			id_2 = message_answer[avance+1];
+			id = id_1*100+id_2;
+			int byte_nickname = message_answer[avance+2];
+			char nickname_cliente[byte_nickname];
+			for (int j = avance + 3; j < avance + 3 + byte_nickname; ++j)
+			{
+				nickname_cliente[j - (avance + 3)] = message_answer[j];
+			}
+			printf("ID: %i - Nickname: %s\n", id, nickname_cliente);
+			avance += 3 + byte_nickname;
 		}
-		printf("ID: %i - Nickname: %s\n", id, nickname_cliente);
-		avance += 3 + byte_nickname;
+	
 	}
 }
 
@@ -693,7 +695,7 @@ int initializeClient(char* ip, int port){
 	int n, m;
 	n = message_init[2];
 	m = message_init[3];
-	printf("tu id es: %i%i\n", n, m);
+	printf("Your ID is: %i%i\n", n, m);
 	// termina funcion 2
 	return clientSocket;
 }
@@ -1610,14 +1612,8 @@ void *listenChatMessage(void *socket_void) {
 	while (1) {
 		char message[1024];
 		recv(socket, message, 1024, 0);
-		if (message[0] == "$"[0] && message[1] == ")"[0] && message[2] == "!"[0] && message[3] == "="[0]){
-			int fid = 20;
-			char cancel_msg[4];
-			cancel_msg[0] = fid;
-			cancel_msg[1] = 2;
-			cancel_msg[2] = ppid[0];
-			cancel_msg[3] = ppid[1];
-			sendMessage(socket, cancel_msg);
+		if (message[0] == 20){
+			lock = 0;
 			return NULL;
 		}
 
@@ -1643,7 +1639,6 @@ int main(int argc, char const *argv[])
 	int socket;
 	printf("Client\n");
     socket = initializeClient(IP, PORT);
-    printf("socket mio: %i\n", socket);
     pthread_t thread;
 	pthread_create(&thread, NULL, listenChatMessage, &socket);
     printf("/i:id -> Invite Player ID, /a -> Waiting Players, /w -> Wait Invitation /s -> Server Info /q -> Quit\n");
@@ -1758,7 +1753,6 @@ int main(int argc, char const *argv[])
 						id_destino[1] = id_emisor-(id_emisor/100)*100;
 					}
 					else if (decicion == 0){
-						printf("!!\n");
 						sendAsnwerToInvitation(socket, "0", id_emisor);
 					}
 				}
