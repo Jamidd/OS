@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include "math.h"
 #include <pthread.h>
-#define IP "0.0.0.0"
+#define IP "192.168.1.46"
 #define PORT 8080
 
 int X = 1;

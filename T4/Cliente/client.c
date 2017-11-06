@@ -9,7 +9,7 @@
 #include "math.h"
 #include <pthread.h>
 #include <signal.h> 
-#define IP "0.0.0.0"
+#define IP "192.168.1.46"
 #define PORT 8080
 
 char id_destino[2];
