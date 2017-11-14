@@ -1,0 +1,406 @@
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.9
+PING 192.168.1.9 (192.168.1.9) 56(84) bytes of data.
+64 bytes from 192.168.1.9: icmp_seq=1 ttl=128 time=1.07 ms
+64 bytes from 192.168.1.9: icmp_seq=2 ttl=128 time=1.15 ms
+64 bytes from 192.168.1.9: icmp_seq=3 ttl=128 time=1.27 ms
+64 bytes from 192.168.1.9: icmp_seq=4 ttl=128 time=1.17 ms
+64 bytes from 192.168.1.9: icmp_seq=5 ttl=128 time=1.10 ms
+64 bytes from 192.168.1.9: icmp_seq=6 ttl=128 time=1.08 ms
+64 bytes from 192.168.1.9: icmp_seq=7 ttl=128 time=1.14 ms
+64 bytes from 192.168.1.9: icmp_seq=8 ttl=128 time=1.14 ms
+64 bytes from 192.168.1.9: icmp_seq=9 ttl=128 time=1.93 ms
+64 bytes from 192.168.1.9: icmp_seq=10 ttl=128 time=1.16 ms
+64 bytes from 192.168.1.9: icmp_seq=11 ttl=128 time=1.16 ms
+64 bytes from 192.168.1.9: icmp_seq=12 ttl=128 time=1.15 ms
+64 bytes from 192.168.1.9: icmp_seq=13 ttl=128 time=1.09 ms
+64 bytes from 192.168.1.9: icmp_seq=14 ttl=128 time=1.17 ms
+64 bytes from 192.168.1.9: icmp_seq=15 ttl=128 time=1.09 ms
+64 bytes from 192.168.1.9: icmp_seq=16 ttl=128 time=1.10 ms
+64 bytes from 192.168.1.9: icmp_seq=17 ttl=128 time=1.10 ms
+64 bytes from 192.168.1.9: icmp_seq=18 ttl=128 time=1.07 ms
+64 bytes from 192.168.1.9: icmp_seq=19 ttl=128 time=0.957 ms
+64 bytes from 192.168.1.9: icmp_seq=20 ttl=128 time=2.93 ms
+64 bytes from 192.168.1.9: icmp_seq=21 ttl=128 time=1.14 ms
+64 bytes from 192.168.1.9: icmp_seq=22 ttl=128 time=1.22 ms
+64 bytes from 192.168.1.9: icmp_seq=23 ttl=128 time=1.25 ms
+64 bytes from 192.168.1.9: icmp_seq=24 ttl=128 time=1.13 ms
+64 bytes from 192.168.1.9: icmp_seq=25 ttl=128 time=1.15 ms
+64 bytes from 192.168.1.9: icmp_seq=26 ttl=128 time=1.04 ms
+64 bytes from 192.168.1.9: icmp_seq=27 ttl=128 time=1.16 ms
+64 bytes from 192.168.1.9: icmp_seq=28 ttl=128 time=1.11 ms
+64 bytes from 192.168.1.9: icmp_seq=29 ttl=128 time=1.24 ms
+64 bytes from 192.168.1.9: icmp_seq=30 ttl=128 time=1.16 ms
+64 bytes from 192.168.1.9: icmp_seq=31 ttl=128 time=1.06 ms
+64 bytes from 192.168.1.9: icmp_seq=32 ttl=128 time=1.06 ms
+64 bytes from 192.168.1.9: icmp_seq=33 ttl=128 time=1.19 ms
+64 bytes from 192.168.1.9: icmp_seq=34 ttl=128 time=1.19 ms
+64 bytes from 192.168.1.9: icmp_seq=35 ttl=128 time=1.12 ms
+^C
+--- 192.168.1.9 ping statistics ---
+35 packets transmitted, 35 received, 0% packet loss, time 34052ms
+rtt min/avg/max/mdev = 0.957/1.211/2.939/0.332 ms
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.103
+PING 192.168.1.103 (192.168.1.103) 56(84) bytes of data.
+64 bytes from 192.168.1.103: icmp_seq=1 ttl=64 time=0.690 ms
+64 bytes from 192.168.1.103: icmp_seq=2 ttl=64 time=0.452 ms
+64 bytes from 192.168.1.103: icmp_seq=3 ttl=64 time=0.477 ms
+64 bytes from 192.168.1.103: icmp_seq=4 ttl=64 time=0.415 ms
+64 bytes from 192.168.1.103: icmp_seq=5 ttl=64 time=0.417 ms
+64 bytes from 192.168.1.103: icmp_seq=6 ttl=64 time=0.391 ms
+64 bytes from 192.168.1.103: icmp_seq=7 ttl=64 time=0.388 ms
+64 bytes from 192.168.1.103: icmp_seq=8 ttl=64 time=0.413 ms
+64 bytes from 192.168.1.103: icmp_seq=9 ttl=64 time=0.370 ms
+64 bytes from 192.168.1.103: icmp_seq=10 ttl=64 time=0.416 ms
+64 bytes from 192.168.1.103: icmp_seq=11 ttl=64 time=0.433 ms
+64 bytes from 192.168.1.103: icmp_seq=12 ttl=64 time=0.390 ms
+64 bytes from 192.168.1.103: icmp_seq=13 ttl=64 time=0.458 ms
+64 bytes from 192.168.1.103: icmp_seq=14 ttl=64 time=0.422 ms
+64 bytes from 192.168.1.103: icmp_seq=15 ttl=64 time=0.444 ms
+64 bytes from 192.168.1.103: icmp_seq=16 ttl=64 time=0.429 ms
+64 bytes from 192.168.1.103: icmp_seq=17 ttl=64 time=0.459 ms
+64 bytes from 192.168.1.103: icmp_seq=18 ttl=64 time=0.519 ms
+64 bytes from 192.168.1.103: icmp_seq=19 ttl=64 time=0.417 ms
+64 bytes from 192.168.1.103: icmp_seq=20 ttl=64 time=0.467 ms
+64 bytes from 192.168.1.103: icmp_seq=21 ttl=64 time=0.425 ms
+64 bytes from 192.168.1.103: icmp_seq=22 ttl=64 time=0.429 ms
+64 bytes from 192.168.1.103: icmp_seq=23 ttl=64 time=0.418 ms
+64 bytes from 192.168.1.103: icmp_seq=24 ttl=64 time=0.513 ms
+^C
+--- 192.168.1.103 ping statistics ---
+24 packets transmitted, 24 received, 0% packet loss, time 23560ms
+rtt min/avg/max/mdev = 0.370/0.443/0.690/0.068 ms
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.9
+ARPING 192.168.1.9 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.583ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.346ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.615ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.603ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.609ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.536ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.512ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.603ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.454ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.595ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.599ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.354ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.588ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.484ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.572ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.595ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.581ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.575ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.571ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.532ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.465ms
+Unicast reply from 192.168.1.9 [DC:4A:3E:EF:E9:A5]  1.622ms
+^CSent 22 probes (1 broadcast(s))
+Received 22 response(s)
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.103
+ARPING 192.168.1.103 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.927ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.924ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.980ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.945ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.979ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.975ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.932ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.944ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.923ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.983ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  1.051ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.972ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.960ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  1.001ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.978ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  1.019ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.911ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.877ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.891ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.925ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.925ms
+Unicast reply from 192.168.1.103 [2C:56:DC:37:7A:D0]  0.934ms
+^CSent 22 probes (1 broadcast(s))
+Received 22 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.101
+PING 192.168.1.101 (192.168.1.101) 56(84) bytes of data.
+^C
+--- 192.168.1.101 ping statistics ---
+14 packets transmitted, 0 received, 100% packet loss, time 13317ms
+
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.101
+ARPING 192.168.1.101 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  4.506ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.033ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.926ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.872ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.056ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.948ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.965ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.927ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.915ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  3.373ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.053ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.978ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.938ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.160ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.909ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.253ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.976ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.981ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.909ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  2.487ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.988ms
+Unicast reply from 192.168.1.101 [9C:EB:E8:5D:67:86]  1.871ms
+^CSent 22 probes (1 broadcast(s))
+Received 22 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.131
+PING 192.168.1.131 (192.168.1.131) 56(84) bytes of data.
+From 192.168.1.124 icmp_seq=1 Destination Host Unreachable
+From 192.168.1.124 icmp_seq=2 Destination Host Unreachable
+From 192.168.1.124 icmp_seq=3 Destination Host Unreachable
+^C
+--- 192.168.1.131 ping statistics ---
+22 packets transmitted, 0 received, +3 errors, 100% packet loss, time 21490ms
+pipe 4
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.131
+ARPING 192.168.1.131 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  156.137ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.411ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.533ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.265ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  5.971ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  14.572ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  16.811ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.193ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.379ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.295ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.391ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.299ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  10.483ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.338ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.299ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.247ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.296ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  45.410ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  46.110ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.248ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.190ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.355ms
+Unicast reply from 192.168.1.131 [DC:85:DE:7F:27:C5]  2.214ms
+^CSent 23 probes (1 broadcast(s))
+Received 23 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.140
+PING 192.168.1.140 (192.168.1.140) 56(84) bytes of data.
+64 bytes from 192.168.1.140: icmp_seq=1 ttl=64 time=0.678 ms
+64 bytes from 192.168.1.140: icmp_seq=2 ttl=64 time=0.377 ms
+64 bytes from 192.168.1.140: icmp_seq=3 ttl=64 time=0.527 ms
+64 bytes from 192.168.1.140: icmp_seq=4 ttl=64 time=0.554 ms
+64 bytes from 192.168.1.140: icmp_seq=5 ttl=64 time=0.541 ms
+64 bytes from 192.168.1.140: icmp_seq=6 ttl=64 time=0.423 ms
+64 bytes from 192.168.1.140: icmp_seq=7 ttl=64 time=0.516 ms
+64 bytes from 192.168.1.140: icmp_seq=8 ttl=64 time=0.372 ms
+64 bytes from 192.168.1.140: icmp_seq=9 ttl=64 time=0.352 ms
+64 bytes from 192.168.1.140: icmp_seq=10 ttl=64 time=0.385 ms
+64 bytes from 192.168.1.140: icmp_seq=11 ttl=64 time=0.337 ms
+64 bytes from 192.168.1.140: icmp_seq=12 ttl=64 time=0.388 ms
+64 bytes from 192.168.1.140: icmp_seq=13 ttl=64 time=0.388 ms
+64 bytes from 192.168.1.140: icmp_seq=14 ttl=64 time=0.352 ms
+64 bytes from 192.168.1.140: icmp_seq=15 ttl=64 time=0.358 ms
+64 bytes from 192.168.1.140: icmp_seq=16 ttl=64 time=4.94 ms
+64 bytes from 192.168.1.140: icmp_seq=17 ttl=64 time=0.317 ms
+64 bytes from 192.168.1.140: icmp_seq=18 ttl=64 time=0.352 ms
+64 bytes from 192.168.1.140: icmp_seq=19 ttl=64 time=0.452 ms
+64 bytes from 192.168.1.140: icmp_seq=20 ttl=64 time=0.562 ms
+64 bytes from 192.168.1.140: icmp_seq=21 ttl=64 time=0.399 ms
+64 bytes from 192.168.1.140: icmp_seq=22 ttl=64 time=0.357 ms
+64 bytes from 192.168.1.140: icmp_seq=23 ttl=64 time=0.528 ms
+64 bytes from 192.168.1.140: icmp_seq=24 ttl=64 time=0.466 ms
+64 bytes from 192.168.1.140: icmp_seq=25 ttl=64 time=0.491 ms
+64 bytes from 192.168.1.140: icmp_seq=26 ttl=64 time=0.480 ms
+64 bytes from 192.168.1.140: icmp_seq=27 ttl=64 time=0.574 ms
+64 bytes from 192.168.1.140: icmp_seq=28 ttl=64 time=0.315 ms
+64 bytes from 192.168.1.140: icmp_seq=29 ttl=64 time=0.557 ms
+64 bytes from 192.168.1.140: icmp_seq=30 ttl=64 time=0.481 ms
+64 bytes from 192.168.1.140: icmp_seq=31 ttl=64 time=0.377 ms
+64 bytes from 192.168.1.140: icmp_seq=32 ttl=64 time=0.549 ms
+64 bytes from 192.168.1.140: icmp_seq=33 ttl=64 time=0.503 ms
+64 bytes from 192.168.1.140: icmp_seq=34 ttl=64 time=0.448 ms
+64 bytes from 192.168.1.140: icmp_seq=35 ttl=64 time=0.391 ms
+^C
+--- 192.168.1.140 ping statistics ---
+35 packets transmitted, 35 received, 0% packet loss, time 34782ms
+rtt min/avg/max/mdev = 0.315/0.573/4.941/0.754 ms
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.140
+ARPING 192.168.1.140 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.922ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  1.087ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  1.011ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.929ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.965ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  1.019ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  1.120ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  1.102ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.871ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.931ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.885ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.846ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.854ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.868ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.802ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.859ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.834ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.839ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.811ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.824ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.946ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.956ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.843ms
+Unicast reply from 192.168.1.140 [38:C9:86:54:A3:88]  0.899ms
+^CSent 24 probes (1 broadcast(s))
+Received 24 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.210
+PING 192.168.1.210 (192.168.1.210) 56(84) bytes of data.
+^C
+--- 192.168.1.210 ping statistics ---
+13 packets transmitted, 0 received, 100% packet loss, time 12283ms
+
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.210
+ARPING 192.168.1.210 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.138ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.191ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.488ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.366ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.488ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.479ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.343ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.267ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.418ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.358ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.371ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.285ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.233ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.287ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  0.869ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.492ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.055ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  1.383ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.192ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.561ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.501ms
+Unicast reply from 192.168.1.210 [2C:4D:54:C9:D4:E4]  2.000ms
+^CSent 22 probes (1 broadcast(s))
+Received 22 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.119
+PING 192.168.1.119 (192.168.1.119) 56(84) bytes of data.
+64 bytes from 192.168.1.119: icmp_seq=1 ttl=64 time=0.293 ms
+64 bytes from 192.168.1.119: icmp_seq=2 ttl=64 time=0.352 ms
+64 bytes from 192.168.1.119: icmp_seq=3 ttl=64 time=0.325 ms
+64 bytes from 192.168.1.119: icmp_seq=4 ttl=64 time=0.355 ms
+64 bytes from 192.168.1.119: icmp_seq=5 ttl=64 time=0.346 ms
+64 bytes from 192.168.1.119: icmp_seq=6 ttl=64 time=0.341 ms
+64 bytes from 192.168.1.119: icmp_seq=7 ttl=64 time=0.384 ms
+64 bytes from 192.168.1.119: icmp_seq=8 ttl=64 time=0.295 ms
+64 bytes from 192.168.1.119: icmp_seq=9 ttl=64 time=0.369 ms
+64 bytes from 192.168.1.119: icmp_seq=10 ttl=64 time=0.346 ms
+64 bytes from 192.168.1.119: icmp_seq=11 ttl=64 time=0.386 ms
+64 bytes from 192.168.1.119: icmp_seq=12 ttl=64 time=0.333 ms
+64 bytes from 192.168.1.119: icmp_seq=13 ttl=64 time=0.337 ms
+64 bytes from 192.168.1.119: icmp_seq=14 ttl=64 time=0.297 ms
+64 bytes from 192.168.1.119: icmp_seq=15 ttl=64 time=0.346 ms
+64 bytes from 192.168.1.119: icmp_seq=16 ttl=64 time=0.331 ms
+64 bytes from 192.168.1.119: icmp_seq=17 ttl=64 time=0.325 ms
+64 bytes from 192.168.1.119: icmp_seq=18 ttl=64 time=0.339 ms
+64 bytes from 192.168.1.119: icmp_seq=19 ttl=64 time=0.331 ms
+64 bytes from 192.168.1.119: icmp_seq=20 ttl=64 time=0.338 ms
+64 bytes from 192.168.1.119: icmp_seq=21 ttl=64 time=0.337 ms
+64 bytes from 192.168.1.119: icmp_seq=22 ttl=64 time=0.341 ms
+64 bytes from 192.168.1.119: icmp_seq=23 ttl=64 time=0.344 ms
+64 bytes from 192.168.1.119: icmp_seq=24 ttl=64 time=0.334 ms
+^C
+--- 192.168.1.119 ping statistics ---
+24 packets transmitted, 24 received, 0% packet loss, time 23549ms
+rtt min/avg/max/mdev = 0.293/0.338/0.386/0.029 ms
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.119
+ARPING 192.168.1.119 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.767ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.853ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.836ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.819ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.869ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.834ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.847ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.880ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.867ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.868ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.857ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.839ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.824ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.839ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.857ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.756ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.833ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.788ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.874ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.821ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.796ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.803ms
+Unicast reply from 192.168.1.119 [0C:4D:E9:B6:A6:0E]  0.831ms
+^CSent 23 probes (1 broadcast(s))
+Received 23 response(s)
+jaime@jaime-hp-spectre-x360:~$ ping 192.168.1.114
+PING 192.168.1.114 (192.168.1.114) 56(84) bytes of data.
+64 bytes from 192.168.1.114: icmp_seq=1 ttl=64 time=0.682 ms
+64 bytes from 192.168.1.114: icmp_seq=2 ttl=64 time=0.513 ms
+64 bytes from 192.168.1.114: icmp_seq=3 ttl=64 time=0.400 ms
+64 bytes from 192.168.1.114: icmp_seq=4 ttl=64 time=0.291 ms
+64 bytes from 192.168.1.114: icmp_seq=5 ttl=64 time=0.251 ms
+64 bytes from 192.168.1.114: icmp_seq=6 ttl=64 time=0.486 ms
+64 bytes from 192.168.1.114: icmp_seq=7 ttl=64 time=0.590 ms
+64 bytes from 192.168.1.114: icmp_seq=8 ttl=64 time=0.478 ms
+64 bytes from 192.168.1.114: icmp_seq=9 ttl=64 time=0.306 ms
+64 bytes from 192.168.1.114: icmp_seq=10 ttl=64 time=0.454 ms
+64 bytes from 192.168.1.114: icmp_seq=11 ttl=64 time=0.423 ms
+64 bytes from 192.168.1.114: icmp_seq=12 ttl=64 time=0.274 ms
+64 bytes from 192.168.1.114: icmp_seq=13 ttl=64 time=0.596 ms
+64 bytes from 192.168.1.114: icmp_seq=14 ttl=64 time=0.387 ms
+64 bytes from 192.168.1.114: icmp_seq=15 ttl=64 time=0.481 ms
+64 bytes from 192.168.1.114: icmp_seq=16 ttl=64 time=0.264 ms
+64 bytes from 192.168.1.114: icmp_seq=17 ttl=64 time=0.498 ms
+64 bytes from 192.168.1.114: icmp_seq=18 ttl=64 time=0.387 ms
+64 bytes from 192.168.1.114: icmp_seq=19 ttl=64 time=0.361 ms
+64 bytes from 192.168.1.114: icmp_seq=20 ttl=64 time=0.401 ms
+64 bytes from 192.168.1.114: icmp_seq=21 ttl=64 time=0.257 ms
+64 bytes from 192.168.1.114: icmp_seq=22 ttl=64 time=0.479 ms
+64 bytes from 192.168.1.114: icmp_seq=23 ttl=64 time=0.411 ms
+64 bytes from 192.168.1.114: icmp_seq=24 ttl=64 time=0.357 ms
+^C
+--- 192.168.1.114 ping statistics ---
+24 packets transmitted, 24 received, 0% packet loss, time 23557ms
+rtt min/avg/max/mdev = 0.251/0.417/0.682/0.114 ms
+jaime@jaime-hp-spectre-x360:~$ arping 192.168.1.114
+ARPING 192.168.1.114 from 192.168.1.124 enxc025e92e538a
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.937ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.963ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.906ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.934ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.877ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.913ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.808ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.940ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.913ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.927ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  1.053ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.912ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.741ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.730ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.726ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.849ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.953ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.876ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.948ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.896ms
+Unicast reply from 192.168.1.114 [AC:87:A3:34:0B:32]  0.945ms
+^CSent 21 probes (1 broadcast(s))
+Received 21 response(s)
+jaime@jaime-hp-spectre-x360:~$ 
+
